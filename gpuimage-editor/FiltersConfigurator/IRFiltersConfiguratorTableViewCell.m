@@ -15,6 +15,9 @@
 
 @property (nonatomic, weak) IBOutlet UILabel* nameLabel;
 @property (nonatomic, weak) IBOutlet UIStackView* parametersStackView;
+@property (nonatomic, weak) UISlider* slider;
+
+@property (nonatomic) NSTimer* timer;
 
 @end
 
@@ -51,19 +54,29 @@
     slider.value = cellData.values[i].floatValue;
     slider.tag = i;
     [slider addTarget:self
-               action:@selector(sliderValueChanged:)
+               action:@selector(sliderShouldChange:)
      forControlEvents:UIControlEventValueChanged];
     [self.parametersStackView addArrangedSubview:slider];
+    self.slider = slider;
   }
 
   self.selected = cellData.enabled;
 }
 
-- (void)sliderValueChanged:(UISlider*)slider {
+- (void)sliderShouldChange:(UISlider*)slider {
+  [self.timer invalidate];
+  self.timer = [NSTimer scheduledTimerWithTimeInterval:0.2
+                                                target:self
+                                              selector:@selector(sliderValueChanged)
+                                              userInfo:nil
+                                               repeats:false];
+}
+
+- (void)sliderValueChanged {
   if([self.delegate respondsToSelector:@selector(filtersConfiguratorTableViewCell:didChangeValue:atParameterWithIndex:)]) {
     [self.delegate filtersConfiguratorTableViewCell:self
-                                     didChangeValue:slider.value
-                               atParameterWithIndex:(NSUInteger) slider.tag];
+                                     didChangeValue:self.slider.value
+                               atParameterWithIndex:(NSUInteger)self.slider.tag];
   }
 }
 
