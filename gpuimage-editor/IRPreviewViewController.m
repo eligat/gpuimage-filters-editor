@@ -16,6 +16,9 @@
 @property(nonatomic, weak) IBOutlet UIImageView *resultImageView;
 @property(nonatomic, weak) IBOutlet UITextView *configurationTextView;
 
+@property(nonatomic) BOOL selectingOverlay;
+@property(nonatomic) UIImage *overlayImage;
+
 @end
 
 @implementation IRPreviewViewController
@@ -42,14 +45,18 @@
 }
 
 - (IBAction)pressedCapturePhotoButton:(UIBarButtonItem *)sender {
-  UIImagePickerController *imagePickerController = [[UIImagePickerController alloc] init];
+  UIImagePickerController *imagePickerController = [self createImagePickerForBarButton: sender];
 
-  imagePickerController.delegate = self;
-  imagePickerController.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
-  imagePickerController.allowsEditing = true;
-  imagePickerController.modalPresentationStyle = UIModalPresentationPopover;
-  imagePickerController.popoverPresentationController.barButtonItem = sender;
+  self.selectingOverlay = NO;
+  [self presentViewController:imagePickerController
+                     animated:true
+                   completion:nil];
+}
 
+- (IBAction)pressedOverlayButton:(UIBarButtonItem *)sender {
+  UIImagePickerController *imagePickerController = [self createImagePickerForBarButton: sender];
+  
+  self.selectingOverlay = YES;
   [self presentViewController:imagePickerController
                      animated:true
                    completion:nil];
@@ -64,6 +71,18 @@
 }
 
 #pragma mark - Private
+- (UIImagePickerController *)createImagePickerForBarButton:(UIBarButtonItem *)button {
+  UIImagePickerController *controller = [[UIImagePickerController alloc] init];
+  
+  controller.delegate = self;
+  controller.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
+  controller.allowsEditing = false;
+  controller.modalPresentationStyle = UIModalPresentationPopover;
+  controller.popoverPresentationController.barButtonItem = button;
+  
+  return controller;
+}
+
 - (void)configureView {
   UIImage *image = self.sourceImageView.image;
   if (image == nil) {
