@@ -18,6 +18,8 @@
 @property(nonatomic) BOOL selectingOverlay;
 @property(nonatomic) UIImage *overlayImage;
 
+@property(nonatomic) dispatch_queue_t processingQueue;
+
 @end
 
 @implementation IRPreviewViewController
@@ -90,38 +92,48 @@
     return;
   }
 
-  double t1 = CACurrentMediaTime();
-  
-  GPUImagePicture *mainPicture = [[GPUImagePicture alloc] initWithImage:image];
-  GPUImageOutput *mainOutput = mainPicture;
-  
-  for (NSUInteger i = 0; i < self.filters.count; i++) {
-    GPUImageFilter *filter = self.filters[i];
-    [mainOutput addTarget:filter];
-    mainOutput = filter;
+  if (!self.processingQueue) {
+    self.processingQueue = dispatch_queue_create("processingQueue", 0);
   }
   
-  GPUImageAlphaBlendFilter *blendFilter = [[GPUImageAlphaBlendFilter alloc] init];
-  [blendFilter setMix:0.5];
-  
-  GPUImagePicture *overlayPicture = nil;
-  if (self.overlayImage) {
-    overlayPicture = [[GPUImagePicture alloc] initWithImage:self.overlayImage];
-    [overlayPicture addTarget:blendFilter];
-  }
-  
-  [mainOutput addTarget:blendFilter];
-  
-  [blendFilter useNextFrameForImageCapture];
-  [mainPicture processImage];
-  [overlayPicture processImage];
-  
-  UIImage *currentFilteredFrame = [blendFilter imageFromCurrentFramebufferWithOrientation:image.imageOrientation];
-  
-  double t2 = CACurrentMediaTime();
-  
-  self.resultImageView.image = currentFilteredFrame;
-  self.configurationTextView.text = [NSString stringWithFormat:@"// render time %f\n%@", (t2 - t1), self.filtersCode];
+  dispatch_async(self.processingQueue, ^{
+    
+    double t1 = CACurrentMediaTime();
+    
+    GPUImagePicture *mainPicture = [[GPUImagePicture alloc] initWithImage:image];
+    GPUImageOutput *mainOutput = mainPicture;
+    
+    for (NSUInteger i = 0; i < self.filters.count; i++) {
+      GPUImageFilter *filter = self.filters[i];
+      [mainOutput addTarget:filter];
+      mainOutput = filter;
+    }
+    
+    GPUImagePicture *overlayPicture = nil;
+    if (self.overlayImage) {
+      GPUImageAlphaBlendFilter *blendFilter = [GPUImageAlphaBlendFilter new];
+      [blendFilter setMix:0.5];
+      
+      overlayPicture = [[GPUImagePicture alloc] initWithImage:self.overlayImage];
+      [overlayPicture processImage];
+      [overlayPicture addTarget:blendFilter];
+      
+      [mainOutput addTarget:blendFilter];
+      mainOutput = blendFilter;
+    }
+    
+    [mainOutput useNextFrameForImageCapture];
+    [mainPicture processImage];
+    
+    UIImage *currentFilteredFrame = [mainOutput imageFromCurrentFramebufferWithOrientation:image.imageOrientation];
+    
+    double t2 = CACurrentMediaTime();
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+      self.resultImageView.image = currentFilteredFrame;
+      self.configurationTextView.text = [NSString stringWithFormat:@"// render time %f\n%@", (t2 - t1), self.filtersCode];
+    });
+  });
 }
 
 #pragma mark - UIImagePickerControllerDelegate
