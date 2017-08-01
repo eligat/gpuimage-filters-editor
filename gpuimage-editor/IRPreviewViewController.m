@@ -6,9 +6,8 @@
 //  Copyright © 2017 IceRock Development. All rights reserved.
 //
 
-#import <GPUImage/GPUImageFilter.h>
-#import <GPUImage/GPUImagePicture.h>
 #import "IRPreviewViewController.h"
+#import <GPUImage/GPUImage.h>
 
 @interface IRPreviewViewController () <UINavigationControllerDelegate, UIImagePickerControllerDelegate>
 
@@ -92,26 +91,35 @@
   }
 
   double t1 = CACurrentMediaTime();
-
-  GPUImagePicture *imagePicture = [[GPUImagePicture alloc] initWithImage:image];
-  GPUImageOutput *imageOutput = imagePicture;
-
+  
+  GPUImagePicture *mainPicture = [[GPUImagePicture alloc] initWithImage:image];
+  GPUImageOutput *mainOutput = mainPicture;
+  
   for (NSUInteger i = 0; i < self.filters.count; i++) {
     GPUImageFilter *filter = self.filters[i];
-
-    [imageOutput addTarget:filter];
-
-    imageOutput = filter;
+    [mainOutput addTarget:filter];
+    mainOutput = filter;
   }
-
-  [imageOutput useNextFrameForImageCapture];
-
-  [imagePicture processImage];
-
-  UIImage *currentFilteredFrame = [imageOutput imageFromCurrentFramebufferWithOrientation:image.imageOrientation];
-
+  
+  GPUImageAlphaBlendFilter *blendFilter = [[GPUImageAlphaBlendFilter alloc] init];
+  [blendFilter setMix:0.5];
+  
+  GPUImagePicture *overlayPicture = nil;
+  if (self.overlayImage) {
+    overlayPicture = [[GPUImagePicture alloc] initWithImage:self.overlayImage];
+    [overlayPicture addTarget:blendFilter];
+  }
+  
+  [mainOutput addTarget:blendFilter];
+  
+  [blendFilter useNextFrameForImageCapture];
+  [mainPicture processImage];
+  [overlayPicture processImage];
+  
+  UIImage *currentFilteredFrame = [blendFilter imageFromCurrentFramebufferWithOrientation:image.imageOrientation];
+  
   double t2 = CACurrentMediaTime();
-
+  
   self.resultImageView.image = currentFilteredFrame;
   self.configurationTextView.text = [NSString stringWithFormat:@"// render time %f\n%@", (t2 - t1), self.filtersCode];
 }
