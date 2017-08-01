@@ -20,12 +20,14 @@
 
 @implementation IRPreviewViewController
 
+#pragma mark - Lifecycle
 - (void)viewDidLoad {
   [super viewDidLoad];
 
   [self configureView];
 }
 
+#pragma mark - Actions
 - (IBAction)pressedShareButton:(UIBarButtonItem *)sender {
   UIActivityViewController *activityViewController =
       [[UIActivityViewController alloc] initWithActivityItems:@[self.configurationTextView.text]
@@ -53,18 +55,7 @@
                    completion:nil];
 }
 
-- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<NSString *, id> *)info {
-
-  UIImage *image = info[UIImagePickerControllerOriginalImage];
-
-  self.sourceImageView.image = image;
-
-  [self dismissViewControllerAnimated:true
-                           completion:^{
-                               [self configureView];
-                           }];
-}
-
+#pragma mark - Public
 - (void)setFilters:(NSArray<GPUImageFilter *> *)filters withCode:(NSString *)code {
   _filters = filters;
   _filtersCode = code;
@@ -72,6 +63,7 @@
   [self configureView];
 }
 
+#pragma mark - Private
 - (void)configureView {
   UIImage *image = self.sourceImageView.image;
   if (image == nil) {
@@ -103,6 +95,23 @@
 
   self.resultImageView.image = currentFilteredFrame;
   self.configurationTextView.text = [NSString stringWithFormat:@"// render time %f\n%@", (t2 - t1), self.filtersCode];
+}
+
+#pragma mark - UIImagePickerControllerDelegate
+- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<NSString *, id> *)info {
+  
+  UIImage *image = info[UIImagePickerControllerOriginalImage];
+  
+  if (self.selectingOverlay) {
+    self.overlayImage = image;
+  } else {
+    self.sourceImageView.image = image;
+  }
+  
+  [self dismissViewControllerAnimated:true
+                           completion:^{
+                             [self configureView];
+                           }];
 }
 
 @end
