@@ -64,7 +64,29 @@
 }
 
 #pragma mark - Public
-- (void)setFilters:(NSArray<GPUImageFilter *> *)filters withCode:(NSString *)code {
+- (void)setFilters:(NSArray<GPUImageFilter *> *)filters withCode:(NSMutableString *)code {
+  if (filters.count > 0) {
+    unsigned long lastFilterIndex = filters.count - 1;
+    NSString *lastFilterName = [NSString stringWithFormat:@"filter%lu",(unsigned long)lastFilterIndex];
+    
+    if (self.overlayImage) {
+      [code appendString:@"GPUImageAlphaBlendFilter *blendFilter = [GPUImageAlphaBlendFilter new];\n"];
+      [code appendString:@"[blendFilter setMix:0.5];\n"];
+      [code appendString:@"GPUImagePicture *overlayPicture = [[GPUImagePicture alloc] initWithImage:<#(image name)#>];\n"];
+      [code appendString:@"[overlayPicture addTarget:blendFilter];\n"];
+      [code appendString:[NSString stringWithFormat:@"[filter%lu addTarget:blendFilter];\n",
+                          (unsigned long)lastFilterIndex]];
+      [code appendString:@"[overlayPicture processImage];\n"];
+      [code appendString:@"[group addFilter:blendFilter];\n"];
+      [code appendString:@"\n"];
+      lastFilterName = @"blendFilter";
+    }
+    
+    [code appendString:@"[group setInitialFilters:@[filter0]];\n"];
+    [code appendString:[NSString stringWithFormat:@"[group setTerminalFilter:%@];\n", lastFilterName]];
+    [code appendString:@"return group;"];
+  }
+  
   _filters = filters;
   _filtersCode = code;
 
@@ -115,11 +137,12 @@
       [blendFilter setMix:0.5];
       
       overlayPicture = [[GPUImagePicture alloc] initWithImage:self.overlayImage];
-      [overlayPicture processImage];
       [overlayPicture addTarget:blendFilter];
       
       [mainOutput addTarget:blendFilter];
       mainOutput = blendFilter;
+      
+      [overlayPicture processImage];
     }
     
     [mainOutput useNextFrameForImageCapture];

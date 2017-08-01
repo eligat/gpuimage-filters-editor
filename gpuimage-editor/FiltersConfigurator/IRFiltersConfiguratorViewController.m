@@ -13,6 +13,7 @@
 #import "IRFilterDescription.h"
 #import "IRPreviewViewController.h"
 #import "IRFilterParameterDescription.h"
+#import <GPUImage/GPUImage.h>
 
 @interface IRFiltersConfiguratorViewController () <IRFiltersConfiguratorTableViewCellDelegate>
 
@@ -106,18 +107,20 @@
 
 - (void)updateConfiguration {
   NSMutableArray<GPUImageFilter *> *filters = [NSMutableArray new];
-  NSMutableString* filtersCode = [NSMutableString stringWithString:@"NSMutableArray<GPUImageFilter*>* filters = [NSMutableArray array];\n"];
+  NSMutableString* filtersCode = [NSMutableString stringWithString:@"GPUImageFilterGroup *group = [GPUImageFilterGroup new];\n"];
   NSUInteger enabledFilterIdx = 0;
 
   for (NSUInteger i = 0; i < self.tableData.count; i++) {
     if (!self.tableData[i].enabled) {
       continue;
     }
-
+    
+    // Filter creation string
     NSString* className = self.tableData[i].filterDescription.className;
     id filter = [NSClassFromString(className) new];
-    [filtersCode appendString:[NSString stringWithFormat:@"filters[%lu] = [%@ new];\n", (unsigned long)enabledFilterIdx, className]];
-
+    [filtersCode appendString:[NSString stringWithFormat:@"%@ *filter%lu = [%@ new];\n", className, (unsigned long)enabledFilterIdx, className]];
+    
+    // Parameter composition string
     for (NSUInteger j = 0; j < self.tableData[i].filterDescription.parametersDescription.count; j++) {
       IRFilterParameterDescription *parameterDescription = self.tableData[i].filterDescription.parametersDescription[j];
 
@@ -132,14 +135,20 @@
       [invocation setArgument:&value atIndex:2];
       [invocation invoke];
 
-      [filtersCode appendString:[NSString stringWithFormat:@"[((%@*)filters[%lu]) %@%f];\n", className, (unsigned long)enabledFilterIdx, setterName, value]];
+      [filtersCode appendString:[NSString stringWithFormat:@"[filter%lu %@%f];\n", (unsigned long)enabledFilterIdx, setterName, value]];
+      [filtersCode appendString:[NSString stringWithFormat:@"[group addFilter:filter%lu];\n", (unsigned long)enabledFilterIdx]];
+      if (enabledFilterIdx > 0) {
+        [filtersCode appendString:[NSString stringWithFormat:@"[filter%lu addTarget:filter%lu];\n",
+                                   (unsigned long)(enabledFilterIdx-1), (unsigned long)enabledFilterIdx]];
+      }
+      [filtersCode appendString:@"\n"];
+      
     }
-
+    
     [filters addObject:filter];
-
     enabledFilterIdx++;
   }
-
+  
   UIViewController *viewController = [(UINavigationController *) [self.splitViewController.viewControllers lastObject] topViewController];
   if ([viewController isKindOfClass:[IRPreviewViewController class]]) {
     IRPreviewViewController *previewViewController = (IRPreviewViewController *) viewController;
