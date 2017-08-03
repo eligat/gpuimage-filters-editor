@@ -14,6 +14,7 @@
 
 @property(nonatomic, copy, readonly) NSArray<GPUImageFilter *> *filters;
 @property(nonatomic, readonly) NSString *filtersCode;
+@property(nonatomic, readonly) NSString *overlayFilterCode;
 
 - (void)setFilters:(NSArray<GPUImageFilter *> *)filters withCode:(NSString*)code;
 
