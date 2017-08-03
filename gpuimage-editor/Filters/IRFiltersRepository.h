@@ -9,9 +9,11 @@
 #import <Foundation/Foundation.h>
 
 @class IRFilterDescription;
+@class GPUImageTwoInputFilter;
 
 @interface IRFiltersRepository : NSObject
 
 @property (readonly) NSArray<IRFilterDescription*>* filtersDescription;
+@property (readonly) NSArray<IRFilterDescription*>* blendModeFilters;
 
 @end

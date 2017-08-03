@@ -283,6 +283,90 @@
                            parametersDescription:@[]
         ]
     ];
+    
+    _blendModeFilters =
+    @[
+      [IRFilterDescription descriptionWithName:@"Normal"
+                                     className:@"GPUImageNormalBlendFilter"
+                         parametersDescription:nil],
+      
+      [IRFilterDescription descriptionWithName:@"Color"
+                                     className:@"GPUImageColorBlendFilter"
+                         parametersDescription:nil],
+      
+      [IRFilterDescription descriptionWithName:@"ColorBurn"
+                                     className:@"GPUImageColorBurnBlendFilter"
+                         parametersDescription:nil],
+      
+      [IRFilterDescription descriptionWithName:@"ColorDodge"
+                                     className:@"GPUImageColorDodgeBlendFilter"
+                         parametersDescription:nil],
+      
+      [IRFilterDescription descriptionWithName:@"Darken"
+                                     className:@"GPUImageDarkenBlendFilter"
+                         parametersDescription:nil],
+      
+      [IRFilterDescription descriptionWithName:@"Difference"
+                                     className:@"GPUImageDifferenceBlendFilter"
+                         parametersDescription:nil],
+      
+      [IRFilterDescription descriptionWithName:@"Divide"
+                                     className:@"GPUImageDivideBlendFilter"
+                         parametersDescription:nil],
+      
+      [IRFilterDescription descriptionWithName:@"Exclusion"
+                                     className:@"GPUImageExclusionBlendFilter"
+                         parametersDescription:nil],
+      
+      [IRFilterDescription descriptionWithName:@"HardLight"
+                                     className:@"GPUImageHardLightBlendFilter"
+                         parametersDescription:nil],
+
+      [IRFilterDescription descriptionWithName:@"Hue"
+                                     className:@"GPUImageHueBlendFilter"
+                         parametersDescription:nil],
+      
+      [IRFilterDescription descriptionWithName:@"Lighten"
+                                     className:@"GPUImageLightenBlendFilter"
+                         parametersDescription:nil],
+      
+      [IRFilterDescription descriptionWithName:@"LinearBurn"
+                                     className:@"GPUImageLinearBurnBlendFilter"
+                         parametersDescription:nil],
+      
+      [IRFilterDescription descriptionWithName:@"Luminosity"
+                                     className:@"GPUImageLuminosityBlendFilter"
+                         parametersDescription:nil],
+      
+      [IRFilterDescription descriptionWithName:@"Multiply"
+                                     className:@"GPUImageMultiplyBlendFilter"
+                         parametersDescription:nil],
+      
+      [IRFilterDescription descriptionWithName:@"Overlay"
+                                     className:@"GPUImageOverlayBlendFilter"
+                         parametersDescription:nil],
+      
+      [IRFilterDescription descriptionWithName:@"Saturation"
+                                     className:@"GPUImageSaturationBlendFilter"
+                         parametersDescription:nil],
+      
+      [IRFilterDescription descriptionWithName:@"Screen"
+                                     className:@"GPUImageScreenBlendFilter"
+                         parametersDescription:nil],
+      
+      [IRFilterDescription descriptionWithName:@"SoftLight"
+                                     className:@"GPUImageSoftLightBlendFilter"
+                         parametersDescription:nil],
+      
+      [IRFilterDescription descriptionWithName:@"SourceOver"
+                                     className:@"GPUImageSourceOverBlendFilter"
+                         parametersDescription:nil],
+      
+      [IRFilterDescription descriptionWithName:@"Substract"
+                                     className:@"GPUImageSubstractBlendFilter"
+                         parametersDescription:nil]
+      
+      ];
   }
   return self;
 }
