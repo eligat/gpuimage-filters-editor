@@ -13,6 +13,7 @@
 		679229DC6818E35735001F75 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 67922DD6BB583AD1DBCE6F40 /* main.m */; };
 		67922D2E9E231EF25BF5C771 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 6792270A869BFB1F6753090F /* AppDelegate.m */; };
 		67922DBCC429A7F0D1BE63F1 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 679223918E35FFD3A6A2FAB5 /* LaunchScreen.storyboard */; };
+		8DF43B4F1F33233800E08CE3 /* IRBlendModesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8DF43B4E1F33233800E08CE3 /* IRBlendModesViewController.m */; };
 		D37E16DD1E48747200EC5395 /* IRPreviewViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D37E16DC1E48747200EC5395 /* IRPreviewViewController.m */; };
 		D37E16F61E4879BF00EC5395 /* IRFilterParameterDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = D37E16EF1E4879BF00EC5395 /* IRFilterParameterDescription.m */; };
 		D37E16F71E4879BF00EC5395 /* IRFiltersRepository.m in Sources */ = {isa = PBXBuildFile; fileRef = D37E16F11E4879BF00EC5395 /* IRFiltersRepository.m */; };
@@ -32,6 +33,8 @@
 		67922EDABA66C5F94DE06C23 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		67922EE26A8BC560F7751FCE /* gpuimage-editor.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "gpuimage-editor.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		67922FF19B66CB1FE599A6DA /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		8DF43B4D1F33233800E08CE3 /* IRBlendModesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IRBlendModesViewController.h; sourceTree = "<group>"; };
+		8DF43B4E1F33233800E08CE3 /* IRBlendModesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IRBlendModesViewController.m; sourceTree = "<group>"; };
 		A4564D16D533F48C17F10840 /* Pods-gpuimage-editor.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-gpuimage-editor.release.xcconfig"; path = "Pods/Target Support Files/Pods-gpuimage-editor/Pods-gpuimage-editor.release.xcconfig"; sourceTree = "<group>"; };
 		C622EEB5DBCB30B9C8763275 /* Pods-gpuimage-editor.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-gpuimage-editor.debug.xcconfig"; path = "Pods/Target Support Files/Pods-gpuimage-editor/Pods-gpuimage-editor.debug.xcconfig"; sourceTree = "<group>"; };
 		D37E16DB1E48747200EC5395 /* IRPreviewViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IRPreviewViewController.h; sourceTree = "<group>"; };
@@ -108,6 +111,8 @@
 				67922B36465A74FC68E1D2B8 /* Info.plist */,
 				D37E16DB1E48747200EC5395 /* IRPreviewViewController.h */,
 				D37E16DC1E48747200EC5395 /* IRPreviewViewController.m */,
+				8DF43B4D1F33233800E08CE3 /* IRBlendModesViewController.h */,
+				8DF43B4E1F33233800E08CE3 /* IRBlendModesViewController.m */,
 				679223918E35FFD3A6A2FAB5 /* LaunchScreen.storyboard */,
 				67922DE06D5FC9883C7D9620 /* Main.storyboard */,
 				67922AC23E5782FEEBF67E00 /* Supporting Files */,
@@ -271,6 +276,7 @@
 			files = (
 				679229DC6818E35735001F75 /* main.m in Sources */,
 				D37E17051E488DCA00EC5395 /* IRFiltersConfiguratorViewController.m in Sources */,
+				8DF43B4F1F33233800E08CE3 /* IRBlendModesViewController.m in Sources */,
 				D37E16F61E4879BF00EC5395 /* IRFilterParameterDescription.m in Sources */,
 				D37E16DD1E48747200EC5395 /* IRPreviewViewController.m in Sources */,
 				67922D2E9E231EF25BF5C771 /* AppDelegate.m in Sources */,

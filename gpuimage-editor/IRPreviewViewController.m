@@ -7,19 +7,28 @@
 //
 
 #import "IRPreviewViewController.h"
+#import "IRBlendModesViewController.h"
+#import "IRFiltersRepository.h"
+#import "IRFilterDescription.h"
 #import <GPUImage/GPUImage.h>
 
-@interface IRPreviewViewController () <UINavigationControllerDelegate, UIImagePickerControllerDelegate>
+NSString * const toBlendModesSegueID = @"toBlendModesViewControllerSegueID";
+
+@interface IRPreviewViewController () <UINavigationControllerDelegate, UIImagePickerControllerDelegate, IRBlendModesViewControllerDelegate>
 
 @property(nonatomic, weak) IBOutlet UIImageView *sourceImageView;
 @property(nonatomic, weak) IBOutlet UIImageView *resultImageView;
 @property(nonatomic, weak) IBOutlet UITextView *configurationTextView;
 @property(nonatomic, weak) IBOutlet UISlider *overlayOpacitySlider;
 @property(nonatomic, weak) IBOutlet UILabel *overlayOpacitySliderValueLabel;
+@property(nonatomic, weak) IBOutlet UIButton *blendModeButton;
 
 @property(nonatomic) BOOL selectingOverlay;
 @property(nonatomic) UIImage *overlayImage;
 @property(nonatomic) NSTimer *overlaySliderTimer;
+
+@property(nonatomic) IRFiltersRepository *filtersRepository;
+@property(nonatomic, nonnull) IRFilterDescription *blendModeFilter;
 
 @property(nonatomic) dispatch_queue_t processingQueue;
 @property(nonatomic) CFTimeInterval lastProcessingTime;
@@ -32,7 +41,11 @@
 - (void)viewDidLoad {
   [super viewDidLoad];
 
+  self.filtersRepository = [IRFiltersRepository new];
+  self.blendModeFilter = self.filtersRepository.blendModeFilters.firstObject;
+  
   [self configureView];
+  [self updateBlendModeButton];
 }
 
 #pragma mark - Actions
@@ -172,11 +185,16 @@
     
     GPUImagePicture *overlayPicture = nil;
     if (weakself.overlayImage) {
-      GPUImageAlphaBlendFilter *blendFilter = [GPUImageAlphaBlendFilter new];
-      [blendFilter setMix:1 - weakself.overlayOpacitySlider.value];
+      GPUImageTwoInputFilter *blendFilter = [NSClassFromString(weakself.blendModeFilter.className) new];
+      
+//      GPUImageAlphaBlendFilter *blendFilter = [GPUImageAlphaBlendFilter new];
+//      [blendFilter setMix:1 - weakself.overlayOpacitySlider.value];
       
       overlayPicture = [[GPUImagePicture alloc] initWithImage:weakself.overlayImage];
-      [overlayPicture addTarget:blendFilter];
+      GPUImageOpacityFilter *opacityFilter = [GPUImageOpacityFilter new];
+      opacityFilter.opacity = weakself.overlayOpacitySlider.value;
+      [overlayPicture addTarget:opacityFilter];
+      [opacityFilter addTarget:blendFilter];
       
       [mainOutput addTarget:blendFilter];
       mainOutput = blendFilter;
@@ -199,6 +217,20 @@
   });
 }
 
+- (void)updateBlendModeButton {
+  [self.blendModeButton setTitle:self.blendModeFilter.name forState:UIControlStateNormal];
+}
+
+#pragma mark - UIViewController
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+  if ([segue.identifier isEqualToString:toBlendModesSegueID] &&
+      [segue.destinationViewController isKindOfClass: [IRBlendModesViewController class]]) {
+    
+    IRBlendModesViewController *controller = segue.destinationViewController;
+    controller.delegate = self;
+  }
+}
+
 #pragma mark - UIImagePickerControllerDelegate
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<NSString *, id> *)info {
   
@@ -215,5 +247,16 @@
                              [self configureView];
                            }];
 }
+
+#pragma mark - IRBlendModesViewControllerDelegate
+- (void)blendModesViewController:(IRBlendModesViewController *)controller
+         selectedBlendModeFilter:(IRFilterDescription *)filter {
+  self.blendModeFilter = filter;
+  [controller dismissViewControllerAnimated:true completion:nil];
+  [self updateBlendModeButton];
+  [self updateOverlayFilterCode];
+  [self configureView];
+}
+
 
 @end
