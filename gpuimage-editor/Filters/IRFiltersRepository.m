@@ -362,8 +362,8 @@
                                      className:@"GPUImageSourceOverBlendFilter"
                          parametersDescription:nil],
       
-      [IRFilterDescription descriptionWithName:@"Substract"
-                                     className:@"GPUImageSubstractBlendFilter"
+      [IRFilterDescription descriptionWithName:@"Subtract"
+                                     className:@"GPUImageSubtractBlendFilter"
                          parametersDescription:nil]
       
       ];
