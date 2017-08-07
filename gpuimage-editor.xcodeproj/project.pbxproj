@@ -13,6 +13,8 @@
 		679229DC6818E35735001F75 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 67922DD6BB583AD1DBCE6F40 /* main.m */; };
 		67922D2E9E231EF25BF5C771 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 6792270A869BFB1F6753090F /* AppDelegate.m */; };
 		67922DBCC429A7F0D1BE63F1 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 679223918E35FFD3A6A2FAB5 /* LaunchScreen.storyboard */; };
+		8D0861991F38271F00DE40A5 /* IRGPUImageBlendFilters.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D0861961F38271F00DE40A5 /* IRGPUImageBlendFilters.m */; };
+		8D08619A1F38271F00DE40A5 /* IRGPUImageOpacityBlendFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D0861981F38271F00DE40A5 /* IRGPUImageOpacityBlendFilter.m */; };
 		8DF43B4F1F33233800E08CE3 /* IRBlendModesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8DF43B4E1F33233800E08CE3 /* IRBlendModesViewController.m */; };
 		D37E16DD1E48747200EC5395 /* IRPreviewViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D37E16DC1E48747200EC5395 /* IRPreviewViewController.m */; };
 		D37E16F61E4879BF00EC5395 /* IRFilterParameterDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = D37E16EF1E4879BF00EC5395 /* IRFilterParameterDescription.m */; };
@@ -33,6 +35,10 @@
 		67922EDABA66C5F94DE06C23 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		67922EE26A8BC560F7751FCE /* gpuimage-editor.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "gpuimage-editor.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		67922FF19B66CB1FE599A6DA /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		8D0861951F38271F00DE40A5 /* IRGPUImageBlendFilters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IRGPUImageBlendFilters.h; sourceTree = "<group>"; };
+		8D0861961F38271F00DE40A5 /* IRGPUImageBlendFilters.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IRGPUImageBlendFilters.m; sourceTree = "<group>"; };
+		8D0861971F38271F00DE40A5 /* IRGPUImageOpacityBlendFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IRGPUImageOpacityBlendFilter.h; sourceTree = "<group>"; };
+		8D0861981F38271F00DE40A5 /* IRGPUImageOpacityBlendFilter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IRGPUImageOpacityBlendFilter.m; sourceTree = "<group>"; };
 		8DF43B4D1F33233800E08CE3 /* IRBlendModesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IRBlendModesViewController.h; sourceTree = "<group>"; };
 		8DF43B4E1F33233800E08CE3 /* IRBlendModesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IRBlendModesViewController.m; sourceTree = "<group>"; };
 		A4564D16D533F48C17F10840 /* Pods-gpuimage-editor.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-gpuimage-editor.release.xcconfig"; path = "Pods/Target Support Files/Pods-gpuimage-editor/Pods-gpuimage-editor.release.xcconfig"; sourceTree = "<group>"; };
@@ -129,6 +135,10 @@
 				D37E16EF1E4879BF00EC5395 /* IRFilterParameterDescription.m */,
 				D37E16F21E4879BF00EC5395 /* IRFiltersRepository.h */,
 				D37E16F11E4879BF00EC5395 /* IRFiltersRepository.m */,
+				8D0861951F38271F00DE40A5 /* IRGPUImageBlendFilters.h */,
+				8D0861961F38271F00DE40A5 /* IRGPUImageBlendFilters.m */,
+				8D0861971F38271F00DE40A5 /* IRGPUImageOpacityBlendFilter.h */,
+				8D0861981F38271F00DE40A5 /* IRGPUImageOpacityBlendFilter.m */,
 			);
 			path = Filters;
 			sourceTree = "<group>";
@@ -279,7 +289,9 @@
 				8DF43B4F1F33233800E08CE3 /* IRBlendModesViewController.m in Sources */,
 				D37E16F61E4879BF00EC5395 /* IRFilterParameterDescription.m in Sources */,
 				D37E16DD1E48747200EC5395 /* IRPreviewViewController.m in Sources */,
+				8D0861991F38271F00DE40A5 /* IRGPUImageBlendFilters.m in Sources */,
 				67922D2E9E231EF25BF5C771 /* AppDelegate.m in Sources */,
+				8D08619A1F38271F00DE40A5 /* IRGPUImageOpacityBlendFilter.m in Sources */,
 				D37E16F81E4879BF00EC5395 /* IRFilterDescription.m in Sources */,
 				D37E16F71E4879BF00EC5395 /* IRFiltersRepository.m in Sources */,
 				D37E16FF1E488D8000EC5395 /* IRFiltersConfiguratorCellData.m in Sources */,
