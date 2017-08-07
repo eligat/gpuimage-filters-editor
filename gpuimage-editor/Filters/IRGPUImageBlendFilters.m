@@ -11,12 +11,12 @@
 #pragma mark HELPER FUNCTIONS
 NSString * const hslColorSpaceHelperFunctions = SHADER_STRING
 (
- lowp vec3 RGBToHSL(lowp vec3 color) {
-   lowp vec3 hsl; // init to 0 to avoid warnings ? (and reverse if + remove first part)
+ mediump vec3 RGBToHSL(mediump vec3 color) {
+   mediump vec3 hsl; // init to 0 to avoid warnings ? (and reverse if + remove first part)
    
-   lowp float fmin = min(min(color.r, color.g), color.b);    //Min. value of RGB
-   lowp float fmax = max(max(color.r, color.g), color.b);    //Max. value of RGB
-   lowp float delta = fmax - fmin;             //Delta RGB value
+   mediump float fmin = min(min(color.r, color.g), color.b);    //Min. value of RGB
+   mediump float fmax = max(max(color.r, color.g), color.b);    //Max. value of RGB
+   mediump float delta = fmax - fmin;             //Delta RGB value
    
    hsl.z = (fmax + fmin) / 2.0; // Luminance
    
@@ -32,9 +32,9 @@ NSString * const hslColorSpaceHelperFunctions = SHADER_STRING
      else
        hsl.y = delta / (2.0 - fmax - fmin); // Saturation
      
-     lowp float deltaR = (((fmax - color.r) / 6.0) + (delta / 2.0)) / delta;
-     lowp float deltaG = (((fmax - color.g) / 6.0) + (delta / 2.0)) / delta;
-     lowp float deltaB = (((fmax - color.b) / 6.0) + (delta / 2.0)) / delta;
+     mediump float deltaR = (((fmax - color.r) / 6.0) + (delta / 2.0)) / delta;
+     mediump float deltaG = (((fmax - color.g) / 6.0) + (delta / 2.0)) / delta;
+     mediump float deltaB = (((fmax - color.b) / 6.0) + (delta / 2.0)) / delta;
      
      if (color.r == fmax )
        hsl.x = deltaB - deltaG; // Hue
@@ -52,12 +52,12 @@ NSString * const hslColorSpaceHelperFunctions = SHADER_STRING
    return hsl;
  }
  
- lowp float HueToRGB(lowp float f1, lowp float f2, lowp float hue) {
+ mediump float HueToRGB(mediump float f1, mediump float f2, mediump float hue) {
    if (hue < 0.0)
      hue += 1.0;
    else if (hue > 1.0)
      hue -= 1.0;
-   lowp float res;
+   mediump float res;
    if ((6.0 * hue) < 1.0)
      res = f1 + (f2 - f1) * 6.0 * hue;
    else if ((2.0 * hue) < 1.0)
@@ -69,21 +69,21 @@ NSString * const hslColorSpaceHelperFunctions = SHADER_STRING
    return res;
  }
  
- lowp vec3 HSLToRGB(lowp vec3 hsl) {
-   lowp vec3 rgb;
+ mediump vec3 HSLToRGB(mediump vec3 hsl) {
+   mediump vec3 rgb;
    
    if (hsl.y == 0.0)
      rgb = vec3(hsl.z); // Luminance
    else
        {
-     lowp float f2;
+     mediump float f2;
      
      if (hsl.z < 0.5)
        f2 = hsl.z * (1.0 + hsl.y);
      else
        f2 = (hsl.z + hsl.y) - (hsl.y * hsl.z);
      
-     lowp float f1 = 2.0 * hsl.z - f2;
+     mediump float f1 = 2.0 * hsl.z - f2;
      
      rgb.r = HueToRGB(f1, f2, hsl.x + (1.0/3.0));
      rgb.g = HueToRGB(f1, f2, hsl.x);
@@ -96,63 +96,63 @@ NSString * const hslColorSpaceHelperFunctions = SHADER_STRING
 
 NSString * const overlayF = SHADER_STRING
 (
- lowp float overlayF(lowp float base, lowp float blend) {
+ mediump float overlayF(mediump float base, mediump float blend) {
    return (base < 0.5 ? (2.0 * base * blend) : (1.0 - 2.0 * (1.0 - base) * (1.0 - blend)));
  }
 );
 
 NSString * const linearBurnF = SHADER_STRING
 (
- lowp float linearBurnF(lowp float base, lowp float blend) {
+ mediump float linearBurnF(mediump float base, mediump float blend) {
    return max(base + blend - 1.0, 0.0);
  }
  );
 
 NSString * const linearDodgeF = SHADER_STRING
 (
- lowp float linearDodgeF(lowp float base, lowp float blend) {
+ mediump float linearDodgeF(mediump float base, mediump float blend) {
    return min(base + blend, 1.0);
  }
 );
 
 NSString * const colorBurnF = SHADER_STRING
 (
- lowp float colorBurnF(lowp float base, lowp float blend) {
+ mediump float colorBurnF(mediump float base, mediump float blend) {
    return ((blend == 0.0) ? blend : max((1.0 - ((1.0 - base) / blend)), 0.0));
  }
  );
 
 NSString * const colorDodgeF = SHADER_STRING
 (
- lowp float colorDodgeF(lowp float base, lowp float blend) {
+ mediump float colorDodgeF(mediump float base, mediump float blend) {
    return ((blend == 1.0) ? blend : min(base / (1.0 - blend), 1.0));
  }
 );
 
 NSString * const darkenF = SHADER_STRING
 (
- lowp float darkenF(lowp float base, lowp float blend) {
+ mediump float darkenF(mediump float base, mediump float blend) {
    return min(base, blend);
  }
 );
 
 NSString * const lightenF = SHADER_STRING
 (
- lowp float lightenF(lowp float base, lowp float blend) {
+ mediump float lightenF(mediump float base, mediump float blend) {
    return max(base, blend);
  }
 );
 
 NSString * const reflectF = SHADER_STRING
 (
- lowp float reflectF(lowp float base, lowp float blend) {
+ mediump float reflectF(mediump float base, mediump float blend) {
    return ((blend == 1.0) ? blend : min(base * base / (1.0 - blend), 1.0));
  }
 );
 
 NSString * const vividLightF = SHADER_STRING
 (
- lowp float vividLightF(lowp float base, lowp float blend) {
+ mediump float vividLightF(mediump float base, mediump float blend) {
    return ((blend < 0.5) ?
            colorBurnF(base, (2.0 * blend)) :
            colorDodgeF(base, (2.0 * (blend - 0.5))));
@@ -195,7 +195,7 @@ NSString * const vividLightF = SHADER_STRING
 - (NSString *)colorBlendShaderCode {
   return SHADER_STRING
   (
-   lowp vec3 blendHSL = RGBToHSL(blend);
+   mediump vec3 blendHSL = RGBToHSL(blend);
    color = HSLToRGB(vec3(blendHSL.r, blendHSL.g, RGBToHSL(base).b));
    );
 }
@@ -271,7 +271,7 @@ NSString * const vividLightF = SHADER_STRING
 - (NSString *)colorBlendShaderHelperFunctionsCode {
   return SHADER_STRING
   (
-   lowp float divideF(lowp float base, lowp float blend) {
+   mediump float divideF(mediump float base, mediump float blend) {
      return (blend == 0.0) ? 1.0 : base/blend;
    }
   );
@@ -334,7 +334,7 @@ NSString * const vividLightF = SHADER_STRING
 - (NSString *)colorBlendShaderHelperFunctionsCode {
   NSString *hardMixF = SHADER_STRING
   (
-   lowp float hardMixF(lowp float base, lowp float blend) {
+   mediump float hardMixF(mediump float base, mediump float blend) {
      return ((vividLightF(base, blend) < 0.5) ? 0.0 : 1.0);
    }
   );
@@ -351,7 +351,7 @@ NSString * const vividLightF = SHADER_STRING
 - (NSString *)colorBlendShaderCode {
   return SHADER_STRING
   (
-   lowp vec3 baseHSL = RGBToHSL(base);
+   mediump vec3 baseHSL = RGBToHSL(base);
    color = HSLToRGB(vec3(RGBToHSL(blend).r, baseHSL.g, baseHSL.b));
    );
 }
@@ -395,7 +395,7 @@ NSString * const vividLightF = SHADER_STRING
 - (NSString *)colorBlendShaderHelperFunctionsCode {
   NSString *linearLightF = SHADER_STRING
   (
-   lowp float linearLightF(lowp float base, lowp float blend) {
+   mediump float linearLightF(mediump float base, mediump float blend) {
      return (blend < 0.5 ?
              linearBurnF(base, (2.0 * blend)) :
              linearDodgeF(base, (2.0 * (blend - 0.5))));
@@ -414,7 +414,7 @@ NSString * const vividLightF = SHADER_STRING
 - (NSString *)colorBlendShaderCode {
   return SHADER_STRING
   (
-   lowp vec3 baseHSL = RGBToHSL(base);
+   mediump vec3 baseHSL = RGBToHSL(base);
    color = HSLToRGB(vec3(baseHSL.r, baseHSL.g, RGBToHSL(blend).b));
    );
 }
@@ -474,7 +474,7 @@ NSString * const vividLightF = SHADER_STRING
 - (NSString *)colorBlendShaderHelperFunctionsCode {
   NSString *pinLightF = SHADER_STRING
   (
-   lowp float pinLightF(lowp float base, lowp float blend) {
+   mediump float pinLightF(mediump float base, mediump float blend) {
      return ((blend < 0.5) ?
              darkenF(base, (2.0 * blend)) :
              lightenF(base, (2.0 *(blend - 0.5))));
@@ -509,7 +509,7 @@ NSString * const vividLightF = SHADER_STRING
 - (NSString *)colorBlendShaderCode {
   return SHADER_STRING
   (
-   lowp vec3 baseHSL = RGBToHSL(base);
+   mediump vec3 baseHSL = RGBToHSL(base);
    color = HSLToRGB(vec3(baseHSL.r, RGBToHSL(blend).g, baseHSL.b));
    );
 }
@@ -543,7 +543,7 @@ NSString * const vividLightF = SHADER_STRING
 - (NSString *)colorBlendShaderHelperFunctionsCode {
   return SHADER_STRING
   (
-   lowp float softLightF(lowp float base, lowp float blend) {
+   mediump float softLightF(mediump float base, mediump float blend) {
      return ((blend < 0.5) ?
              (2.0 * base * blend + base * base * (1.0 - 2.0 * blend)) :
              (sqrt(base) * (2.0 * blend - 1.0) + 2.0 * base * (1.0 - blend)));
