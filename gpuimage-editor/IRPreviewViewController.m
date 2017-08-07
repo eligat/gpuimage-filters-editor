@@ -132,12 +132,13 @@ NSString * const toBlendModesSegueID = @"toBlendModesViewControllerSegueID";
     NSString *lastFilterName = [NSString stringWithFormat:@"filter%lu",(unsigned long)lastFilterIndex];
     
     if (self.overlayImage) {
-      [code appendString:@"GPUImageAlphaBlendFilter *blendFilter = [GPUImageAlphaBlendFilter new];\n"];
-      [code appendString:[NSString stringWithFormat:@"[blendFilter setMix:%f];\n", 1 - self.overlayOpacitySlider.value]];
+      [code appendString:[NSString stringWithFormat:@"IRGPUImageOpacityBlendFilter *blendFilter = [%@ new];\n",
+                          NSClassFromString(self.blendModeFilter.className)]];
+      [code appendString:[NSString stringWithFormat:@"blendFilter.opacity = %f];\n", self.overlayOpacitySlider.value]];
       [code appendString:@"GPUImagePicture *overlayPicture = [[GPUImagePicture alloc] initWithImage:<#(image name)#>];\n"];
-      [code appendString:@"[overlayPicture addTarget:blendFilter];\n"];
       [code appendString:[NSString stringWithFormat:@"[filter%lu addTarget:blendFilter];\n",
                           (unsigned long)lastFilterIndex]];
+      [code appendString:@"[overlayPicture addTarget:blendFilter];\n"];
       [code appendString:@"[overlayPicture processImage];\n"];
       [code appendString:@"[group addFilter:blendFilter];\n"];
       [code appendString:@"\n"];
@@ -190,9 +191,6 @@ NSString * const toBlendModesSegueID = @"toBlendModesViewControllerSegueID";
       blendFilter.opacity = weakself.overlayOpacitySlider.value;
       
       overlayPicture = [[GPUImagePicture alloc] initWithImage:weakself.overlayImage];
-//      GPUImageOpacityFilter *opacityFilter = [GPUImageOpacityFilter new];
-//      opacityFilter.opacity = weakself.overlayOpacitySlider.value;
-//      [overlayPicture addTarget:opacityFilter];
       
       [mainOutput addTarget:blendFilter];
       [overlayPicture addTarget:blendFilter];
