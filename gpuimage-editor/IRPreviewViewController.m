@@ -10,6 +10,7 @@
 #import "IRBlendModesViewController.h"
 #import "IRFiltersRepository.h"
 #import "IRFilterDescription.h"
+#import "IRGPUImageOpacityBlendFilter.h"
 #import <GPUImage/GPUImage.h>
 
 NSString * const toBlendModesSegueID = @"toBlendModesViewControllerSegueID";
@@ -185,18 +186,17 @@ NSString * const toBlendModesSegueID = @"toBlendModesViewControllerSegueID";
     
     GPUImagePicture *overlayPicture = nil;
     if (weakself.overlayImage) {
-      GPUImageTwoInputFilter *blendFilter = [NSClassFromString(weakself.blendModeFilter.className) new];
-      
-//      GPUImageAlphaBlendFilter *blendFilter = [GPUImageAlphaBlendFilter new];
-//      [blendFilter setMix:1 - weakself.overlayOpacitySlider.value];
+      IRGPUImageOpacityBlendFilter *blendFilter = [NSClassFromString(weakself.blendModeFilter.className) new];
+      blendFilter.opacity = weakself.overlayOpacitySlider.value;
       
       overlayPicture = [[GPUImagePicture alloc] initWithImage:weakself.overlayImage];
-      GPUImageOpacityFilter *opacityFilter = [GPUImageOpacityFilter new];
-      opacityFilter.opacity = weakself.overlayOpacitySlider.value;
-      [overlayPicture addTarget:opacityFilter];
-      [opacityFilter addTarget:blendFilter];
+//      GPUImageOpacityFilter *opacityFilter = [GPUImageOpacityFilter new];
+//      opacityFilter.opacity = weakself.overlayOpacitySlider.value;
+//      [overlayPicture addTarget:opacityFilter];
       
       [mainOutput addTarget:blendFilter];
+      [overlayPicture addTarget:blendFilter];
+      
       mainOutput = blendFilter;
       
       [overlayPicture processImage];
