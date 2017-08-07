@@ -8,6 +8,7 @@
 
 #import "IRGPUImageBlendFilters.h"
 
+#pragma mark HELPER FUNCTIONS
 NSString * const hslColorSpaceHelperFunctions = SHADER_STRING
 (
  lowp vec3 RGBToHSL(lowp vec3 color) {
@@ -93,7 +94,73 @@ NSString * const hslColorSpaceHelperFunctions = SHADER_STRING
  }
 );
 
+NSString * const overlayF = SHADER_STRING
+(
+ lowp float overlayF(lowp float base, lowp float blend) {
+   return (base < 0.5 ? (2.0 * base * blend) : (1.0 - 2.0 * (1.0 - base) * (1.0 - blend)));
+ }
+);
 
+NSString * const linearBurnF = SHADER_STRING
+(
+ lowp float linearBurnF(lowp float base, lowp float blend) {
+   return max(base + blend - 1.0, 0.0);
+ }
+ );
+
+NSString * const linearDodgeF = SHADER_STRING
+(
+ lowp float linearDodgeF(lowp float base, lowp float blend) {
+   return min(base + blend, 1.0);
+ }
+);
+
+NSString * const colorBurnF = SHADER_STRING
+(
+ lowp float colorBurnF(lowp float base, lowp float blend) {
+   return ((blend == 0.0) ? blend : max((1.0 - ((1.0 - base) / blend)), 0.0));
+ }
+ );
+
+NSString * const colorDodgeF = SHADER_STRING
+(
+ lowp float colorDodgeF(lowp float base, lowp float blend) {
+   return ((blend == 1.0) ? blend : min(base / (1.0 - blend), 1.0));
+ }
+);
+
+NSString * const darkenF = SHADER_STRING
+(
+ lowp float darkenF(lowp float base, lowp float blend) {
+   return min(base, blend);
+ }
+);
+
+NSString * const lightenF = SHADER_STRING
+(
+ lowp float lightenF(lowp float base, lowp float blend) {
+   return max(base, blend);
+ }
+);
+
+NSString * const reflectF = SHADER_STRING
+(
+ lowp float reflectF(lowp float base, lowp float blend) {
+   return ((blend == 1.0) ? blend : min(base * base / (1.0 - blend), 1.0));
+ }
+);
+
+NSString * const vividLightF = SHADER_STRING
+(
+ lowp float vividLightF(lowp float base, lowp float blend) {
+   return ((blend < 0.5) ?
+           colorBurnF(base, (2.0 * blend)) :
+           colorDodgeF(base, (2.0 * (blend - 0.5))));
+ }
+);
+
+
+#pragma mark Normal
 @implementation IRGPUImageNormalBlendFilter
 - (NSString *)colorBlendShaderCode {
   return SHADER_STRING
@@ -103,6 +170,7 @@ NSString * const hslColorSpaceHelperFunctions = SHADER_STRING
 }
 @end
 
+#pragma mark Add (Linear Dodge)
 @implementation IRGPUImageAddBlendFilter
 - (NSString *)colorBlendShaderCode {
   return SHADER_STRING
@@ -112,6 +180,7 @@ NSString * const hslColorSpaceHelperFunctions = SHADER_STRING
 }
 @end
 
+#pragma mark Average
 @implementation IRGPUImageAverageBlendFilter
 - (NSString *)colorBlendShaderCode {
   return SHADER_STRING
@@ -121,42 +190,54 @@ NSString * const hslColorSpaceHelperFunctions = SHADER_STRING
 }
 @end
 
+#pragma mark Color
+@implementation IRGPUImageColorBlendFilter
+- (NSString *)colorBlendShaderCode {
+  return SHADER_STRING
+  (
+   lowp vec3 blendHSL = RGBToHSL(blend);
+   color = HSLToRGB(vec3(blendHSL.r, blendHSL.g, RGBToHSL(base).b));
+   );
+}
+
+- (NSString *)colorBlendShaderHelperFunctionsCode {
+  return hslColorSpaceHelperFunctions;
+}
+@end
+
+#pragma mark ColorBurn
 @implementation IRGPUImageColorBurnBlendFilter
 - (NSString *)colorBlendShaderCode {
   return SHADER_STRING
   (
-   color = vec3(colorBurnF(base.r, blend.r), colorBurnF(base.g, blend.g), colorBurnF(base.b, blend.b));
+   color = vec3(colorBurnF(base.r, blend.r),
+                colorBurnF(base.g, blend.g),
+                colorBurnF(base.b, blend.b));
   );
 }
 
 - (NSString *)colorBlendShaderHelperFunctionsCode {
-  return SHADER_STRING
-  (
-   lowp float colorBurnF(lowp float base, lowp float blend) {
-     return (blend == 0.0) ? blend : max((1.0 - ((1.0 - base)/blend)), 0.0);
-   }
-  );
+  return colorBurnF;
 }
 @end
 
+#pragma mark Color Dodge
 @implementation IRGPUImageColorDodgeBlendFilter
 - (NSString *)colorBlendShaderCode {
   return SHADER_STRING
   (
-   color = vec3(colorDodgeF(base.r, blend.r), colorDodgeF(base.g, blend.g), colorDodgeF(base.b, blend.b));
+   color = vec3(colorDodgeF(base.r, blend.r),
+                colorDodgeF(base.g, blend.g),
+                colorDodgeF(base.b, blend.b));
   );
 }
 
 - (NSString *)colorBlendShaderHelperFunctionsCode {
-  return SHADER_STRING
-  (
-   lowp float colorDodgeF(lowp float base, lowp float blend) {
-     return (blend == 1.0) ? blend : min(base/(1.0 - blend), 1.0);
-   }
-  );
+  return colorDodgeF;
 }
 @end
 
+#pragma mark Darken
 @implementation IRGPUImageDarkenBlendFilter
 - (NSString *)colorBlendShaderCode {
   return SHADER_STRING
@@ -166,6 +247,7 @@ NSString * const hslColorSpaceHelperFunctions = SHADER_STRING
 }
 @end
 
+#pragma mark Difference
 @implementation IRGPUImageDifferenceBlendFilter
 - (NSString *)colorBlendShaderCode {
   return SHADER_STRING
@@ -175,11 +257,14 @@ NSString * const hslColorSpaceHelperFunctions = SHADER_STRING
 }
 @end
 
+#pragma mark Divide
 @implementation IRGPUImageDivideBlendFilter
 - (NSString *)colorBlendShaderCode {
   return SHADER_STRING
   (
-   color = vec3(divideF(base.r, blend.r), divideF(base.g, blend.g), divideF(base.b, blend.b));
+   color = vec3(divideF(base.r, blend.r),
+                divideF(base.g, blend.g),
+                divideF(base.b, blend.b));
   );
 }
 
@@ -193,6 +278,7 @@ NSString * const hslColorSpaceHelperFunctions = SHADER_STRING
 }
 @end
 
+#pragma mark Exclusion
 @implementation IRGPUImageExclusionBlendFilter
 - (NSString *)colorBlendShaderCode {
   return SHADER_STRING
@@ -202,6 +288,65 @@ NSString * const hslColorSpaceHelperFunctions = SHADER_STRING
 }
 @end
 
+#pragma mark Glow
+@implementation IRGPUImageGlowBlendFilter
+- (NSString *)colorBlendShaderCode {
+  return SHADER_STRING
+  (
+   color = vec3(reflectF(blend.r, base.r),
+                reflectF(blend.g, base.g),
+                reflectF(blend.b, base.b));
+   );
+}
+
+- (NSString *)colorBlendShaderHelperFunctionsCode {
+  return reflectF;
+}
+@end
+
+#pragma mark Hard Light
+@implementation IRGPUImageHardLightBlendFilter
+- (NSString *)colorBlendShaderCode {
+  return SHADER_STRING
+  (
+   color = vec3(overlayF(blend.r, base.r),
+                overlayF(blend.g, base.g),
+                overlayF(blend.b, base.b));
+   );
+}
+
+- (NSString *)colorBlendShaderHelperFunctionsCode {
+  return overlayF;
+}
+@end
+
+#pragma mark Hard Mix
+@implementation IRGPUImageHardMixBlendFilter
+- (NSString *)colorBlendShaderCode {
+  return SHADER_STRING
+  (
+   color = vec3(hardMixF(base.r, blend.r),
+                hardMixF(base.g, blend.g),
+                hardMixF(base.b, blend.b));
+   );
+}
+
+- (NSString *)colorBlendShaderHelperFunctionsCode {
+  NSString *hardMixF = SHADER_STRING
+  (
+   lowp float hardMixF(lowp float base, lowp float blend) {
+     return ((vividLightF(base, blend) < 0.5) ? 0.0 : 1.0);
+   }
+  );
+  
+  NSString *str = [NSString stringWithFormat:@"%@\n%@\n%@\n%@",
+                   colorBurnF, colorDodgeF, vividLightF, hardMixF];
+  
+  return str;
+}
+@end
+
+#pragma mark Hue
 @implementation IRGPUImageHueBlendFilter
 - (NSString *)colorBlendShaderCode {
   return SHADER_STRING
@@ -216,6 +361,7 @@ NSString * const hslColorSpaceHelperFunctions = SHADER_STRING
 }
 @end
 
+#pragma mark Lighten
 @implementation IRGPUImageLightenBlendFilter
 - (NSString *)colorBlendShaderCode {
   return SHADER_STRING
@@ -225,6 +371,60 @@ NSString * const hslColorSpaceHelperFunctions = SHADER_STRING
 }
 @end
 
+#pragma mark Linear Burn
+@implementation IRGPUImageLinearBurnBlendFilter
+- (NSString *)colorBlendShaderCode {
+  return SHADER_STRING
+  (
+   color = max(base + blend - 1.0, 0.0);
+   );
+}
+@end
+
+#pragma mark Linear Light
+@implementation IRGPUImageLinearLightBlendFilter
+- (NSString *)colorBlendShaderCode {
+  return SHADER_STRING
+  (
+   color = vec3(linearLightF(base.r, blend.r),
+                linearLightF(base.g, blend.g),
+                linearLightF(base.b, blend.b));
+   );
+}
+
+- (NSString *)colorBlendShaderHelperFunctionsCode {
+  NSString *linearLightF = SHADER_STRING
+  (
+   lowp float linearLightF(lowp float base, lowp float blend) {
+     return (blend < 0.5 ?
+             linearBurnF(base, (2.0 * blend)) :
+             linearDodgeF(base, (2.0 * (blend - 0.5))));
+   }
+  );
+  
+  NSString *str = [NSString stringWithFormat:@"%@\n%@\n%@",
+   linearBurnF, linearDodgeF, linearLightF];
+  
+  return str;
+}
+@end
+
+#pragma mark Luminosity
+@implementation IRGPUImageLuminosityBlendFilter
+- (NSString *)colorBlendShaderCode {
+  return SHADER_STRING
+  (
+   lowp vec3 baseHSL = RGBToHSL(base);
+   color = HSLToRGB(vec3(baseHSL.r, baseHSL.g, RGBToHSL(blend).b));
+   );
+}
+
+- (NSString *)colorBlendShaderHelperFunctionsCode {
+  return hslColorSpaceHelperFunctions;
+}
+@end
+
+#pragma mark Multiply
 @implementation IRGPUImageMultiplyBlendFilter
 - (NSString *)colorBlendShaderCode {
   return SHADER_STRING
@@ -234,24 +434,92 @@ NSString * const hslColorSpaceHelperFunctions = SHADER_STRING
 }
 @end
 
+#pragma mark Overlay
 @implementation IRGPUImageOverlayBlendFilter
 - (NSString *)colorBlendShaderCode {
   return SHADER_STRING
   (
-   color = vec3(overlayF(base.r, blend.r), overlayF(base.g, blend.g), overlayF(base.b, blend.b));
+   color = vec3(overlayF(base.r, blend.r),
+                overlayF(base.g, blend.g),
+                overlayF(base.b, blend.b));
    );
 }
 
 - (NSString *)colorBlendShaderHelperFunctionsCode {
+  return overlayF;
+}
+@end
+
+#pragma mark Phoenix
+@implementation IRGPUImagePhoenixBlendFilter
+- (NSString *)colorBlendShaderCode {
   return SHADER_STRING
   (
-   lowp float overlayF(lowp float base, lowp float blend) {
-     return (base < 0.5 ? (2.0 * base * blend) : (1.0 - 2.0 * (1.0 - base) * (1.0 - blend)))
-   }
+   color = (min(base, blend) - max(base, blend) + vec3(1.0));
   );
 }
 @end
 
+#pragma mark Pin Light
+@implementation IRGPUImagePinLightBlendFilter
+- (NSString *)colorBlendShaderCode {
+  return SHADER_STRING
+  (
+   color = vec3(pinLightF(base.r, blend.r),
+                pinLightF(base.g, blend.g),
+                pinLightF(base.b, blend.b));
+   );
+}
+
+- (NSString *)colorBlendShaderHelperFunctionsCode {
+  NSString *pinLightF = SHADER_STRING
+  (
+   lowp float pinLightF(lowp float base, lowp float blend) {
+     return ((blend < 0.5) ?
+             darkenF(base, (2.0 * blend)) :
+             lightenF(base, (2.0 *(blend - 0.5))));
+   }
+   );
+  
+  NSString *str = [NSString stringWithFormat:@"%@\n%@\n%@",
+                   darkenF, lightenF, pinLightF];
+  
+  return str;
+}
+@end
+
+#pragma mark Reflect
+@implementation IRGPUImageReflectBlendFilter
+- (NSString *)colorBlendShaderCode {
+  return SHADER_STRING
+  (
+   color = vec3(reflectF(base.r, blend.r),
+                reflectF(base.g, blend.g),
+                reflectF(base.b, blend.b));
+   );
+}
+
+- (NSString *)colorBlendShaderHelperFunctionsCode {
+  return reflectF;
+}
+@end
+
+#pragma mark Saturation
+@implementation IRGPUImageSaturationBlendFilter
+- (NSString *)colorBlendShaderCode {
+  return SHADER_STRING
+  (
+   lowp vec3 baseHSL = RGBToHSL(base);
+   color = HSLToRGB(vec3(baseHSL.r, RGBToHSL(blend).g, baseHSL.b));
+   );
+}
+
+- (NSString *)colorBlendShaderHelperFunctionsCode {
+  return hslColorSpaceHelperFunctions;
+}
+@end
+
+#pragma mark Screen
 @implementation IRGPUImageScreenBlendFilter
 - (NSString *)colorBlendShaderCode {
   return SHADER_STRING
@@ -261,11 +529,54 @@ NSString * const hslColorSpaceHelperFunctions = SHADER_STRING
 }
 @end
 
+#pragma mark Soft Light
+@implementation IRGPUImageSoftLightBlendFilter
+- (NSString *)colorBlendShaderCode {
+  return SHADER_STRING
+  (
+   color = vec3(softLightF(base.r, blend.r),
+                softLightF(base.g, blend.g),
+                softLightF(base.b, blend.b));
+   );
+}
+
+- (NSString *)colorBlendShaderHelperFunctionsCode {
+  return SHADER_STRING
+  (
+   lowp float softLightF(lowp float base, lowp float blend) {
+     return ((blend < 0.5) ?
+             (2.0 * base * blend + base * base * (1.0 - 2.0 * blend)) :
+             (sqrt(base) * (2.0 * blend - 1.0) + 2.0 * base * (1.0 - blend)));
+   }
+  );
+}
+@end
+
+#pragma mark Subtract
 @implementation IRGPUImageSubtractBlendFilter
 - (NSString *)colorBlendShaderCode {
   return SHADER_STRING
   (
    color = max(base - blend, 0.0);
    );
+}
+@end
+
+#pragma mark Vivid Light
+@implementation IRGPUImageVividLightBlendFilter
+- (NSString *)colorBlendShaderCode {
+  return SHADER_STRING
+  (
+   color = vec3(vividLightF(base.r, blend.r),
+                vividLightF(base.g, blend.g),
+                vividLightF(base.b, blend.b));
+   );
+}
+
+- (NSString *)colorBlendShaderHelperFunctionsCode {
+  NSString *str = [NSString stringWithFormat:@"%@\n%@\n%@",
+                   colorBurnF, colorDodgeF, vividLightF];
+  
+  return str;
 }
 @end

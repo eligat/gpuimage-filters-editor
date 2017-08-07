@@ -284,101 +284,29 @@
         ]
     ];
     
-//    _blendModeFilters =
-//    @[
-//      [IRFilterDescription descriptionWithName:@"Normal"
-//                                     className:@"GPUImageNormalBlendFilter"
-//                         parametersDescription:nil],
-//
-//      [IRFilterDescription descriptionWithName:@"Color"
-//                                     className:@"GPUImageColorBlendFilter"
-//                         parametersDescription:nil],
-//      
-//      [IRFilterDescription descriptionWithName:@"ColorBurn"
-//                                     className:@"GPUImageColorBurnBlendFilter"
-//                         parametersDescription:nil],
-//      
-//      [IRFilterDescription descriptionWithName:@"ColorDodge"
-//                                     className:@"GPUImageColorDodgeBlendFilter"
-//                         parametersDescription:nil],
-//      
-//      [IRFilterDescription descriptionWithName:@"Darken"
-//                                     className:@"GPUImageDarkenBlendFilter"
-//                         parametersDescription:nil],
-//      
-//      [IRFilterDescription descriptionWithName:@"Difference"
-//                                     className:@"GPUImageDifferenceBlendFilter"
-//                         parametersDescription:nil],
-//      
-//      [IRFilterDescription descriptionWithName:@"Divide"
-//                                     className:@"GPUImageDivideBlendFilter"
-//                         parametersDescription:nil],
-//
-//      [IRFilterDescription descriptionWithName:@"Exclusion"
-//                                     className:@"GPUImageExclusionBlendFilter"
-//                         parametersDescription:nil],
-//      
-//      [IRFilterDescription descriptionWithName:@"HardLight"
-//                                     className:@"GPUImageHardLightBlendFilter"
-//                         parametersDescription:nil],
-//
-//      [IRFilterDescription descriptionWithName:@"Hue"
-//                                     className:@"GPUImageHueBlendFilter"
-//                         parametersDescription:nil],
-//      
-//      [IRFilterDescription descriptionWithName:@"Lighten"
-//                                     className:@"GPUImageLightenBlendFilter"
-//                         parametersDescription:nil],
-//      
-//      [IRFilterDescription descriptionWithName:@"LinearBurn"
-//                                     className:@"GPUImageLinearBurnBlendFilter"
-//                         parametersDescription:nil],
-//      
-//      [IRFilterDescription descriptionWithName:@"Luminosity"
-//                                     className:@"GPUImageLuminosityBlendFilter"
-//                         parametersDescription:nil],
-//      
-//      [IRFilterDescription descriptionWithName:@"Multiply"
-//                                     className:@"GPUImageMultiplyBlendFilter"
-//                         parametersDescription:nil],
-//      
-//      [IRFilterDescription descriptionWithName:@"Overlay"
-//                                     className:@"GPUImageOverlayBlendFilter"
-//                         parametersDescription:nil],
-//      
-//      [IRFilterDescription descriptionWithName:@"Saturation"
-//                                     className:@"GPUImageSaturationBlendFilter"
-//                         parametersDescription:nil],
-//      
-//      [IRFilterDescription descriptionWithName:@"Screen"
-//                                     className:@"GPUImageScreenBlendFilter"
-//                         parametersDescription:nil],
-//      
-//      [IRFilterDescription descriptionWithName:@"SoftLight"
-//                                     className:@"GPUImageSoftLightBlendFilter"
-//                         parametersDescription:nil],
-//      
-//      [IRFilterDescription descriptionWithName:@"SourceOver"
-//                                     className:@"GPUImageSourceOverBlendFilter"
-//                         parametersDescription:nil],
-//      
-//      [IRFilterDescription descriptionWithName:@"Subtract"
-//                                     className:@"GPUImageSubtractBlendFilter"
-//                         parametersDescription:nil]
-//      
-//      ];
-    
     _blendModeFilters =
     @[
       [IRFilterDescription descriptionWithName:@"Normal"
                                      className:@"IRGPUImageNormalBlendFilter"
                          parametersDescription:nil],
       
-      [IRFilterDescription descriptionWithName:@"ColorBurn"
+      [IRFilterDescription descriptionWithName:@"Add (Linear Dodge)"
+                                     className:@"IRGPUImageAddBlendFilter"
+                         parametersDescription:nil],
+      
+      [IRFilterDescription descriptionWithName:@"Average"
+                                     className:@"IRGPUImageAverageBlendFilter"
+                         parametersDescription:nil],
+      
+      [IRFilterDescription descriptionWithName:@"Color"
+                                     className:@"IRGPUImageColorBlendFilter"
+                         parametersDescription:nil],
+      
+      [IRFilterDescription descriptionWithName:@"Color Burn"
                                      className:@"IRGPUImageColorBurnBlendFilter"
                          parametersDescription:nil],
       
-      [IRFilterDescription descriptionWithName:@"ColorDodge"
+      [IRFilterDescription descriptionWithName:@"Color Dodge"
                                      className:@"IRGPUImageColorDodgeBlendFilter"
                          parametersDescription:nil],
       
@@ -394,9 +322,81 @@
                                      className:@"IRGPUImageDivideBlendFilter"
                          parametersDescription:nil],
       
+      [IRFilterDescription descriptionWithName:@"Exclusion"
+                                     className:@"IRGPUImageExclusionBlendFilter"
+                         parametersDescription:nil],
+      
+      [IRFilterDescription descriptionWithName:@"Glow"
+                                     className:@"IRGPUImageGlowBlendFilter"
+                         parametersDescription:nil],
+      
+      [IRFilterDescription descriptionWithName:@"Hard Light"
+                                     className:@"IRGPUImageHardLightBlendFilter"
+                         parametersDescription:nil],
+      
+      [IRFilterDescription descriptionWithName:@"Hard Mix"
+                                     className:@"IRGPUImageHardMixBlendFilter"
+                         parametersDescription:nil],
+      
+      [IRFilterDescription descriptionWithName:@"Hue"
+                                     className:@"IRGPUImageHueBlendFilter"
+                         parametersDescription:nil],
+      
+      [IRFilterDescription descriptionWithName:@"Lighten"
+                                     className:@"IRGPUImageLightenBlendFilter"
+                         parametersDescription:nil],
+      
+      [IRFilterDescription descriptionWithName:@"Linear Burn"
+                                     className:@"IRGPUImageLinearBurnBlendFilter"
+                         parametersDescription:nil],
+
+      [IRFilterDescription descriptionWithName:@"Linear Light"
+                                     className:@"IRGPUImageLinearLightBlendFilter"
+                         parametersDescription:nil],
+      
+      [IRFilterDescription descriptionWithName:@"Luminosity"
+                                     className:@"IRGPUImageLuminosityBlendFilter"
+                         parametersDescription:nil],
+      
+      [IRFilterDescription descriptionWithName:@"Multiply"
+                                     className:@"IRGPUImageMultiplyBlendFilter"
+                         parametersDescription:nil],
+      
+      [IRFilterDescription descriptionWithName:@"Overlay"
+                                     className:@"IRGPUImageOverlayBlendFilter"
+                         parametersDescription:nil],
+      
+      [IRFilterDescription descriptionWithName:@"Phoenix"
+                                     className:@"IRGPUImagePhoenixBlendFilter"
+                         parametersDescription:nil],
+      
+      [IRFilterDescription descriptionWithName:@"Pin Light"
+                                     className:@"IRGPUImagePinLightBlendFilter"
+                         parametersDescription:nil],
+      
+      [IRFilterDescription descriptionWithName:@"Reflect"
+                                     className:@"IRGPUImageReflectBlendFilter"
+                         parametersDescription:nil],
+      
+      [IRFilterDescription descriptionWithName:@"Saturation"
+                                     className:@"IRGPUImageSaturationBlendFilter"
+                         parametersDescription:nil],
+      
+      [IRFilterDescription descriptionWithName:@"Soft Light"
+                                     className:@"IRGPUImageSoftLightBlendFilter"
+                         parametersDescription:nil],
+      
       [IRFilterDescription descriptionWithName:@"Screen"
                                      className:@"IRGPUImageScreenBlendFilter"
                          parametersDescription:nil],
+      
+      [IRFilterDescription descriptionWithName:@"Subtract"
+                                     className:@"IRGPUImageSubtractBlendFilter"
+                         parametersDescription:nil],
+      
+      [IRFilterDescription descriptionWithName:@"Vivid Light"
+                                     className:@"IRGPUImageVividLightBlendFilter"
+                         parametersDescription:nil]
     ];
   }
   return self;
