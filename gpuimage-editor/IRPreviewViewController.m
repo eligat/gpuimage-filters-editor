@@ -261,6 +261,7 @@ NSString * const toBlendModesSegueID = @"toBlendModesViewControllerSegueID";
          selectedBlendModeFilter:(IRFilterDescription *)filter {
   self.blendModeFilter = filter;
   [controller dismissViewControllerAnimated:true completion:nil];
+  [self updateBlendModeButton];
   [self updateFilters];
 }
 
