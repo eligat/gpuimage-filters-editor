@@ -24,15 +24,19 @@ NSString *const kIRGPUImageOpacityFragmentShaderStringTemplate = SHADER_STRING
  
  void main()
  {
-    lowp vec3 base = texture2D(inputImageTexture, textureCoordinate).rgb;
-    lowp vec3 blend = texture2D(inputImageTexture2, textureCoordinate2).rgb;
+    lowp vec4 baseFull = texture2D(inputImageTexture, textureCoordinate);
+    lowp vec4 blendFull = texture2D(inputImageTexture2, textureCoordinate2);
+    lowp vec3 base = baseFull.rgb;
+    lowp vec3 blend = blendFull.rgb;
     lowp vec3 color; // pixel color with opacity NOT taken into account
 
     // Particular blend shader implementation should initialize `color` variable
     %@
 
-    lowp vec3 resultColor = (color * opacity + base * (1.0 - opacity));
-    gl_FragColor = vec4(resultColor, 1.0);
+    lowp float totalOpacity = opacity * blendFull.a;
+    lowp vec3 resultColor = (color * totalOpacity + base * (1.0 - totalOpacity));
+    lowp float resultAlpha = baseFull.a + (1.0 - baseFull.a) * blendFull.a;
+    gl_FragColor = vec4(resultColor, resultAlpha);
  }
 );
 #else
