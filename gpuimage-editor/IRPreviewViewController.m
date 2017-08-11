@@ -93,15 +93,15 @@ NSString * const toBlendModesSegueID = @"toBlendModesViewControllerSegueID";
 }
 
 - (IBAction)overlaySliderValueChanged {
-  [self updateFiltersCode];
+  [self updateFilters];
 }
 
 - (IBAction)deleteOverlayButtonPressed:(UIButton *)sender {
   self.overlayImage = nil;
-  [self updateFiltersCode];
+  [self updateFilters];
 }
 
-- (void)updateFiltersCode {
+- (void)updateFilters {
   // We need to regenerate filters every time we reprocess the output image
   // because of GPUImage bug with multiple input filters: https://github.com/BradLarson/GPUImage/issues/1522
   UIViewController *viewController = [(UINavigationController *) [self.splitViewController.viewControllers firstObject] topViewController];
@@ -252,7 +252,7 @@ NSString * const toBlendModesSegueID = @"toBlendModesViewControllerSegueID";
   
   [self dismissViewControllerAnimated:true
                            completion:^{
-                             [self updateFiltersCode];
+                             [self updateFilters];
                            }];
 }
 
@@ -261,9 +261,7 @@ NSString * const toBlendModesSegueID = @"toBlendModesViewControllerSegueID";
          selectedBlendModeFilter:(IRFilterDescription *)filter {
   self.blendModeFilter = filter;
   [controller dismissViewControllerAnimated:true completion:nil];
-  [self updateBlendModeButton];
-  [self updateOverlayFilterCode];
-  [self configureView];
+  [self updateFilters];
 }
 
 
