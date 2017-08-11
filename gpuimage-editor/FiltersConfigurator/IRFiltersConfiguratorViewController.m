@@ -103,7 +103,7 @@
   [self updateConfiguration];
 }
 
-#pragma mark - Private
+#pragma mark - Public
 
 - (void)updateConfiguration {
   NSMutableArray<GPUImageFilter *> *filters = [NSMutableArray new];

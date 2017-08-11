@@ -7,6 +7,7 @@
 //
 
 #import "IRPreviewViewController.h"
+#import "IRFiltersConfiguratorViewController.h"
 #import "IRBlendModesViewController.h"
 #import "IRFiltersRepository.h"
 #import "IRFilterDescription.h"
@@ -92,14 +93,22 @@ NSString * const toBlendModesSegueID = @"toBlendModesViewControllerSegueID";
 }
 
 - (IBAction)overlaySliderValueChanged {
-  [self updateOverlayFilterCode];
-  [self configureView];
+  [self updateFiltersCode];
 }
 
 - (IBAction)deleteOverlayButtonPressed:(UIButton *)sender {
   self.overlayImage = nil;
-  [self updateOverlayFilterCode];
-  [self configureView];
+  [self updateFiltersCode];
+}
+
+- (void)updateFiltersCode {
+  // We need to regenerate filters every time we reprocess the output image
+  // because of GPUImage bug with multiple input filters: https://github.com/BradLarson/GPUImage/issues/1522
+  UIViewController *viewController = [(UINavigationController *) [self.splitViewController.viewControllers firstObject] topViewController];
+  if ([viewController isKindOfClass:[IRFiltersConfiguratorViewController class]]) {
+    IRFiltersConfiguratorViewController *configuratorViewController = (IRFiltersConfiguratorViewController *) viewController;
+    [configuratorViewController updateConfiguration];
+  }
 }
 
 
@@ -177,13 +186,13 @@ NSString * const toBlendModesSegueID = @"toBlendModesViewControllerSegueID";
     
     double t1 = CACurrentMediaTime();
     
-    GPUImagePicture *mainPicture = [[GPUImagePicture alloc] initWithImage:image];
-    GPUImageOutput *mainOutput = mainPicture;
+    GPUImagePicture *picture = [[GPUImagePicture alloc] initWithImage:image];
+    GPUImageOutput *output = picture;
     
     for (NSUInteger i = 0; i < weakself.filters.count; i++) {
       GPUImageFilter *filter = weakself.filters[i];
-      [mainOutput addTarget:filter];
-      mainOutput = filter;
+      [output addTarget:filter];
+      output = filter;
     }
     
     GPUImagePicture *overlayPicture = nil;
@@ -193,18 +202,18 @@ NSString * const toBlendModesSegueID = @"toBlendModesViewControllerSegueID";
       
       overlayPicture = [[GPUImagePicture alloc] initWithImage:overlayImage];
       
-      [mainOutput addTarget:blendFilter];
+      [output addTarget:blendFilter];
       [overlayPicture addTarget:blendFilter];
       
-      mainOutput = blendFilter;
+      output = blendFilter;
       
       [overlayPicture processImage];
     }
     
-    [mainOutput useNextFrameForImageCapture];
-    [mainPicture processImage];
+    [output useNextFrameForImageCapture];
+    [picture processImage];
     
-    UIImage *currentFilteredFrame = [mainOutput imageFromCurrentFramebufferWithOrientation:image.imageOrientation];
+    UIImage *currentFilteredFrame = [output imageFromCurrentFramebufferWithOrientation:image.imageOrientation];
     
     double t2 = CACurrentMediaTime();
     weakself.lastProcessingTime = t2 - t1;
@@ -243,7 +252,7 @@ NSString * const toBlendModesSegueID = @"toBlendModesViewControllerSegueID";
   
   [self dismissViewControllerAnimated:true
                            completion:^{
-                             [self configureView];
+                             [self updateFiltersCode];
                            }];
 }
 

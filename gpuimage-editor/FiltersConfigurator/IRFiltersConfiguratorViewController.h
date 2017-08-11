@@ -14,4 +14,6 @@
 
 @property(strong, nonatomic) IRPreviewViewController *previewViewController;
 
+- (void)updateConfiguration;
+
 @end
