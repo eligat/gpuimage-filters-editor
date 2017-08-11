@@ -134,8 +134,8 @@ NSString * const toBlendModesSegueID = @"toBlendModesViewControllerSegueID";
     if (self.overlayImage) {
       [code appendString:[NSString stringWithFormat:@"IRGPUImageOpacityBlendFilter *blendFilter = [%@ new];\n",
                           NSClassFromString(self.blendModeFilter.className)]];
-      [code appendString:[NSString stringWithFormat:@"blendFilter.opacity = %f];\n", self.overlayOpacitySlider.value]];
-      [code appendString:@"GPUImagePicture *overlayPicture = [[GPUImagePicture alloc] initWithImage:<#(image name)#>];\n"];
+      [code appendString:[NSString stringWithFormat:@"blendFilter.opacity = %f;\n", self.overlayOpacitySlider.value]];
+      [code appendString:@"GPUImagePicture *overlayPicture = [[GPUImagePicture alloc] initWithImage:[UIImage imageNamed:@\"<#(image name)#>\"]];\n"];
       [code appendString:[NSString stringWithFormat:@"[filter%lu addTarget:blendFilter];\n",
                           (unsigned long)lastFilterIndex]];
       [code appendString:@"[overlayPicture addTarget:blendFilter];\n"];
@@ -163,6 +163,7 @@ NSString * const toBlendModesSegueID = @"toBlendModesViewControllerSegueID";
     self.configurationTextView.text = nil;
     return;
   }
+  UIImage *overlayImage = self.overlayImage;
   
   if (!self.processingQueue) {
     self.processingQueue = dispatch_queue_create("processingQueue", 0);
@@ -186,11 +187,11 @@ NSString * const toBlendModesSegueID = @"toBlendModesViewControllerSegueID";
     }
     
     GPUImagePicture *overlayPicture = nil;
-    if (weakself.overlayImage) {
+    if (overlayImage) {
       IRGPUImageOpacityBlendFilter *blendFilter = [NSClassFromString(weakself.blendModeFilter.className) new];
       blendFilter.opacity = weakself.overlayOpacitySlider.value;
       
-      overlayPicture = [[GPUImagePicture alloc] initWithImage:weakself.overlayImage];
+      overlayPicture = [[GPUImagePicture alloc] initWithImage:overlayImage];
       
       [mainOutput addTarget:blendFilter];
       [overlayPicture addTarget:blendFilter];

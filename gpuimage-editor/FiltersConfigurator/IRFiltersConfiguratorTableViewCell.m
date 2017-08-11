@@ -67,16 +67,17 @@
   [self.timer invalidate];
   self.timer = [NSTimer scheduledTimerWithTimeInterval:0.2
                                                 target:self
-                                              selector:@selector(sliderValueChanged)
-                                              userInfo:nil
+                                              selector:@selector(sliderValueChanged:)
+                                              userInfo:slider
                                                repeats:false];
 }
 
-- (void)sliderValueChanged {
+- (void)sliderValueChanged:(NSTimer*)timer {
   if([self.delegate respondsToSelector:@selector(filtersConfiguratorTableViewCell:didChangeValue:atParameterWithIndex:)]) {
+    UISlider *slider = timer.userInfo;
     [self.delegate filtersConfiguratorTableViewCell:self
-                                     didChangeValue:self.slider.value
-                               atParameterWithIndex:(NSUInteger)self.slider.tag];
+                                     didChangeValue:slider.value
+                               atParameterWithIndex:(NSUInteger)slider.tag];
   }
 }
 

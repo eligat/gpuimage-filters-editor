@@ -111,21 +111,22 @@
   NSUInteger enabledFilterIdx = 0;
 
   for (NSUInteger i = 0; i < self.tableData.count; i++) {
-    if (!self.tableData[i].enabled) {
+    IRFiltersConfiguratorCellData *configuration = self.tableData[i];
+    if (!configuration.enabled) {
       continue;
     }
     
     // Filter creation string
-    NSString* className = self.tableData[i].filterDescription.className;
+    NSString* className = configuration.filterDescription.className;
     id filter = [NSClassFromString(className) new];
     [filtersCode appendString:[NSString stringWithFormat:@"%@ *filter%lu = [%@ new];\n", className, (unsigned long)enabledFilterIdx, className]];
     
     // Parameter composition string
-    for (NSUInteger j = 0; j < self.tableData[i].filterDescription.parametersDescription.count; j++) {
-      IRFilterParameterDescription *parameterDescription = self.tableData[i].filterDescription.parametersDescription[j];
+    for (NSUInteger j = 0; j < configuration.filterDescription.parametersDescription.count; j++) {
+      IRFilterParameterDescription *parameterDescription = configuration.filterDescription.parametersDescription[j];
 
       NSString* setterName = parameterDescription.setterName;
-      CGFloat value = self.tableData[i].values[j].floatValue;
+      CGFloat value = configuration.values[j].floatValue;
 
       SEL setterSelector = NSSelectorFromString(setterName);
       NSMethodSignature *setterSignature = [[filter class] instanceMethodSignatureForSelector:setterSelector];
@@ -134,16 +135,16 @@
       [invocation setSelector:setterSelector];
       [invocation setArgument:&value atIndex:2];
       [invocation invoke];
-
+     
       [filtersCode appendString:[NSString stringWithFormat:@"[filter%lu %@%f];\n", (unsigned long)enabledFilterIdx, setterName, value]];
-      [filtersCode appendString:[NSString stringWithFormat:@"[group addFilter:filter%lu];\n", (unsigned long)enabledFilterIdx]];
-      if (enabledFilterIdx > 0) {
-        [filtersCode appendString:[NSString stringWithFormat:@"[filter%lu addTarget:filter%lu];\n",
-                                   (unsigned long)(enabledFilterIdx-1), (unsigned long)enabledFilterIdx]];
-      }
-      [filtersCode appendString:@"\n"];
-      
     }
+    
+    [filtersCode appendString:[NSString stringWithFormat:@"[group addFilter:filter%lu];\n", (unsigned long)enabledFilterIdx]];
+    if (enabledFilterIdx > 0) {
+      [filtersCode appendString:[NSString stringWithFormat:@"[filter%lu addTarget:filter%lu];\n",
+                                 (unsigned long)(enabledFilterIdx-1), (unsigned long)enabledFilterIdx]];
+    }
+    [filtersCode appendString:@"\n"];
     
     [filters addObject:filter];
     enabledFilterIdx++;
