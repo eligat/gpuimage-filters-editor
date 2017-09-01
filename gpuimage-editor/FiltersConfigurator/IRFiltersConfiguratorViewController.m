@@ -107,7 +107,7 @@
 
 - (void)updateConfiguration {
   NSMutableArray<GPUImageFilter *> *filters = [NSMutableArray new];
-  NSMutableString* filtersCode = [NSMutableString stringWithString:@"GPUImageFilterGroup *group = [GPUImageFilterGroup new];\n"];
+  NSMutableString* filtersCode = [NSMutableString stringWithString:@"IRGPUImageOverlayFilterGroup *group = [IRGPUImageOverlayFilterGroup new];\n"];
   NSUInteger enabledFilterIdx = 0;
 
   for (NSUInteger i = 0; i < self.tableData.count; i++) {

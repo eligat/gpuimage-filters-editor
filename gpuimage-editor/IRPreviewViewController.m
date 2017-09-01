@@ -145,6 +145,7 @@ NSString * const toBlendModesSegueID = @"toBlendModesViewControllerSegueID";
                           NSClassFromString(self.blendModeFilter.className)]];
       [code appendString:[NSString stringWithFormat:@"blendFilter.opacity = %f;\n", self.overlayOpacitySlider.value]];
       [code appendString:@"GPUImagePicture *overlayPicture = [[GPUImagePicture alloc] initWithImage:[UIImage imageNamed:@\"<#(image name)#>\"]];\n"];
+      [code appendString:@"group.overlayPicture = overlayPicture;"];
       [code appendString:[NSString stringWithFormat:@"[filter%lu addTarget:blendFilter];\n",
                           (unsigned long)lastFilterIndex]];
       [code appendString:@"[overlayPicture addTarget:blendFilter];\n"];
