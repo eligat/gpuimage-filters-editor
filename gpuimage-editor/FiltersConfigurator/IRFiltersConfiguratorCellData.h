@@ -7,14 +7,15 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "JSONModel.h"
 
 @class IRFilterDescription;
 
-@interface IRFiltersConfiguratorCellData: NSObject
+@interface IRFiltersConfiguratorCellData: JSONModel
 
-@property (nonatomic, readonly) IRFilterDescription *filterDescription;
+@property (nonatomic) IRFilterDescription *filterDescription;
+@property (nonatomic) NSMutableArray<NSNumber *> *values;
 @property bool enabled;
-@property NSMutableArray<NSNumber*>* values;
 
 - (instancetype)initWithFilterDescription:(IRFilterDescription *)filterDescription;
 

@@ -28,4 +28,13 @@
   return self;
 }
 
+#pragma mark - JSONModel
++ (BOOL)propertyIsIgnored:(NSString *)propertyName {
+  if ([propertyName isEqualToString:@"enabled"]) {
+    return YES;
+  }
+  
+  return NO;
+}
+
 @end

@@ -7,13 +7,14 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "JSONModel.h"
 
-@interface IRFilterParameterDescription : NSObject
+@interface IRFilterParameterDescription : JSONModel
 
-@property(readonly) NSString *name;
-@property(readonly) NSString *setterName;
-@property(readonly) NSNumber *minValue;
-@property(readonly) NSNumber *maxValue;
+@property(nonatomic) NSString *name;
+@property(nonatomic) NSString *setterName;
+@property(nonatomic) NSNumber *minValue;
+@property(nonatomic) NSNumber *maxValue;
 
 + (IRFilterParameterDescription *)descriptionWithName:(NSString *)name
                                            setterName:(NSString *)setterName

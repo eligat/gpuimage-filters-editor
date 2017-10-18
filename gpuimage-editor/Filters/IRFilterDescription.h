@@ -7,17 +7,19 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "JSONModel.h"
 
 @class IRFilterParameterDescription;
+@protocol IRFilterParameterDescription;
 
-@interface IRFilterDescription : NSObject
+@interface IRFilterDescription : JSONModel
 
-@property (readonly) NSString* name;
-@property (readonly) NSString* className;
-@property (readonly) NSArray<IRFilterParameterDescription*>* parametersDescription;
+@property (nonatomic) NSString *name;
+@property (nonatomic) NSString *className;
+@property (nonatomic) NSArray<IRFilterParameterDescription *> <IRFilterParameterDescription> *parametersDescription;
 
-+ (IRFilterDescription *) descriptionWithName:(NSString*)name
-                                    className:(NSString*)className
++ (IRFilterDescription *) descriptionWithName:(NSString *)name
+                                    className:(NSString *)className
                         parametersDescription:(NSArray<IRFilterParameterDescription*>*)parametersDescription;
 
 @end
