@@ -10,13 +10,13 @@
 
 @implementation IRFilterGroupDescription 
 
-- (nonnull instancetype)initWithFilterConfigurations:(nonnull NSArray<IRFilterConfiguration *> <IRFiltersConfiguratorCellData> *)filterConfigurations
-                   overlayConfigurations:(nonnull NSArray<IRFilterOverlayConfiguration *> <IRFilterOverlayConfiguration> *)overlayConfigurations {
+- (nonnull instancetype)initWithFilterConfigurations:(nonnull NSArray<IRFilterConfiguration *> *)filterConfigurations
+                   overlayConfigurations:(nonnull NSArray<IRFilterOverlayConfiguration *> *)overlayConfigurations {
   self = [super init];
   
   if (self) {
-    _filterConfigurations = filterConfigurations;
-    _overlayConfigurations = overlayConfigurations;
+    _filterConfigurations = (NSArray<IRFilterConfiguration *><IRFilterConfiguration> *)filterConfigurations;
+    _overlayConfigurations = (NSArray<IRFilterOverlayConfiguration *><IRFilterOverlayConfiguration> *)overlayConfigurations;
   }
   
   return self;

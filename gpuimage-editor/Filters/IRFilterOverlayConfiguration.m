@@ -18,7 +18,7 @@
   
   if (self) {
     _name = name;
-    _className = name;
+    _className = className;
     _imageName = imageName;
     _opacity = opacity;
   }

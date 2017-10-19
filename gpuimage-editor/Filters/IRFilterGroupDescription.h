@@ -7,15 +7,19 @@
 //
 
 #import <JSONModel/JSONModel.h>
+#import "IRFilterConfiguration.h"
+#import "IRFilterOverlayConfiguration.h"
 
-@class IRFilterConfiguration, IRFilterOverlayConfiguration;
-@protocol IRFiltersConfiguratorCellData, IRFilterOverlayConfiguration;
+@protocol IRFilterConfiguration, IRFilterOverlayConfiguration;
 
 
 @interface IRFilterGroupDescription : JSONModel
 
-@property (nonatomic, nonnull) NSArray<IRFilterConfiguration *> <IRFiltersConfiguratorCellData> *filterConfigurations;
+@property (nonatomic, nonnull) NSArray<IRFilterConfiguration *> <IRFilterConfiguration> *filterConfigurations;
 @property (nonatomic, nonnull) NSArray<IRFilterOverlayConfiguration *> <IRFilterOverlayConfiguration> *overlayConfigurations;
 @property (nonatomic, readonly) BOOL isEmpty;
+
+- (nonnull instancetype)initWithFilterConfigurations:(nonnull NSArray<IRFilterConfiguration *> *)filterConfigurations
+                               overlayConfigurations:(nonnull NSArray<IRFilterOverlayConfiguration *> *)overlayConfigurations;
 
 @end
