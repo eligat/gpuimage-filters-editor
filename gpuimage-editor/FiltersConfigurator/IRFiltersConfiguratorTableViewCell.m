@@ -9,7 +9,7 @@
 #import "IRFiltersConfiguratorTableViewCell.h"
 #import "IRFilterDescription.h"
 #import "IRFilterParameterDescription.h"
-#import "IRFiltersConfiguratorCellData.h"
+#import "IRFilterConfiguration.h"
 
 @interface IRFiltersConfiguratorTableViewCell()
 
@@ -34,7 +34,7 @@
     // Configure the view for the selected state
 }
 
-- (void)fill:(IRFiltersConfiguratorCellData*)cellData {
+- (void)fill:(IRFilterConfiguration*)cellData {
   self.nameLabel.text = cellData.filterDescription.name;
 
   for(NSInteger i = self.parametersStackView.subviews.count - 1;i >= 0;i--) {

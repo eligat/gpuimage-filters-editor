@@ -10,7 +10,7 @@
 
 @implementation IRFilterGroupDescription 
 
-- (nonnull instancetype)initWithFilterConfigurations:(nonnull NSArray<IRFiltersConfiguratorCellData *> <IRFiltersConfiguratorCellData> *)filterConfigurations
+- (nonnull instancetype)initWithFilterConfigurations:(nonnull NSArray<IRFilterConfiguration *> <IRFiltersConfiguratorCellData> *)filterConfigurations
                    overlayConfigurations:(nonnull NSArray<IRFilterOverlayConfiguration *> <IRFilterOverlayConfiguration> *)overlayConfigurations {
   self = [super init];
   

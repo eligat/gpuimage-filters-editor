@@ -9,7 +9,7 @@
 #import "IRFiltersConfiguratorViewController.h"
 #import "IRFiltersRepository.h"
 #import "IRFiltersConfiguratorTableViewCell.h"
-#import "IRFiltersConfiguratorCellData.h"
+#import "IRFilterConfiguration.h"
 #import "IRFilterDescription.h"
 #import "IRPreviewViewController.h"
 #import "IRFilterParameterDescription.h"
@@ -17,7 +17,7 @@
 
 @interface IRFiltersConfiguratorViewController () <IRFiltersConfiguratorTableViewCellDelegate>
 
-@property(nonatomic) NSMutableArray<IRFiltersConfiguratorCellData *> *tableData;
+@property(nonatomic) NSMutableArray<IRFilterConfiguration *> *tableData;
 
 @end
 
@@ -31,7 +31,7 @@
 
   for (NSUInteger i = 0; i < filtersRepository.filtersDescription.count; i++) {
     IRFilterDescription *filterDescription = filtersRepository.filtersDescription[i];
-    self.tableData[i] = [[IRFiltersConfiguratorCellData alloc] initWithFilterDescription:filterDescription];
+    self.tableData[i] = [[IRFilterConfiguration alloc] initWithFilterDescription:filterDescription];
   }
 
   self.tableView.estimatedRowHeight = 44.0;
@@ -55,7 +55,7 @@
   IRFiltersConfiguratorTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"FilterDescriptionCell"
                                                                              forIndexPath:indexPath];
 
-  IRFiltersConfiguratorCellData *data = self.tableData[indexPath.row];
+  IRFilterConfiguration *data = self.tableData[indexPath.row];
 
   [cell fill:data];
   [cell setDelegate:self];
@@ -80,7 +80,7 @@
 }
 
 - (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)sourceIndexPath toIndexPath:(NSIndexPath *)destinationIndexPath {
-  IRFiltersConfiguratorCellData *data = self.tableData[sourceIndexPath.row];
+  IRFilterConfiguration *data = self.tableData[sourceIndexPath.row];
   [self.tableData removeObjectAtIndex:sourceIndexPath.row];
   [self.tableData insertObject:data atIndex:destinationIndexPath.row];
 
@@ -111,7 +111,7 @@
   NSUInteger enabledFilterIdx = 0;
 
   for (NSUInteger i = 0; i < self.tableData.count; i++) {
-    IRFiltersConfiguratorCellData *configuration = self.tableData[i];
+    IRFilterConfiguration *configuration = self.tableData[i];
     if (!configuration.enabled) {
       continue;
     }

@@ -9,7 +9,7 @@
 #import "IRGPUImageOverlaysFilterGroup.h"
 #import "IROverlayFilterGroupFactory.h"
 #import "IRFilterGroupDescription.h"
-#import "IRFiltersConfiguratorCellData.h"
+#import "IRFilterConfiguration.h"
 #import "IRFilterOverlayConfiguration.h"
 #import "IRGPUImageOpacityBlendFilter.h"
 #import <GPUImage/GPUImage.h>
@@ -26,7 +26,7 @@
     IRGPUImageOverlaysFilterGroup *group = [IRGPUImageOverlaysFilterGroup new];
     GPUImageOutput<GPUImageInput> * lastFilter = nil;
     
-    for (IRFiltersConfiguratorCellData *config in description.filterConfigurations) {
+    for (IRFilterConfiguration *config in description.filterConfigurations) {
         
         // Create filter
         NSString* className = config.filterDescription.className;

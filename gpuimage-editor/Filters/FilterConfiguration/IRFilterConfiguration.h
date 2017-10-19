@@ -10,7 +10,7 @@
 #import "JSONModel.h"
 #import "IRFilterDescription.h"
 
-@interface IRFiltersConfiguratorCellData: JSONModel
+@interface IRFilterConfiguration: JSONModel
 
 @property (nonatomic) IRFilterDescription *filterDescription;
 @property (nonatomic) NSMutableArray<NSNumber *> *values;

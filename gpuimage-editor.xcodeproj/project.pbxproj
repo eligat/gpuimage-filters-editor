@@ -24,7 +24,7 @@
 		D37E16F61E4879BF00EC5395 /* IRFilterParameterDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = D37E16EF1E4879BF00EC5395 /* IRFilterParameterDescription.m */; };
 		D37E16F71E4879BF00EC5395 /* IRFiltersRepository.m in Sources */ = {isa = PBXBuildFile; fileRef = D37E16F11E4879BF00EC5395 /* IRFiltersRepository.m */; };
 		D37E16F81E4879BF00EC5395 /* IRFilterDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = D37E16F31E4879BF00EC5395 /* IRFilterDescription.m */; };
-		D37E16FF1E488D8000EC5395 /* IRFiltersConfiguratorCellData.m in Sources */ = {isa = PBXBuildFile; fileRef = D37E16FE1E488D8000EC5395 /* IRFiltersConfiguratorCellData.m */; };
+		D37E16FF1E488D8000EC5395 /* IRFilterConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = D37E16FE1E488D8000EC5395 /* IRFilterConfiguration.m */; };
 		D37E17051E488DCA00EC5395 /* IRFiltersConfiguratorViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D37E17011E488DCA00EC5395 /* IRFiltersConfiguratorViewController.m */; };
 		D37E17061E488DCA00EC5395 /* IRFiltersConfiguratorTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D37E17021E488DCA00EC5395 /* IRFiltersConfiguratorTableViewCell.m */; };
 /* End PBXBuildFile section */
@@ -63,8 +63,8 @@
 		D37E16F11E4879BF00EC5395 /* IRFiltersRepository.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IRFiltersRepository.m; sourceTree = "<group>"; };
 		D37E16F21E4879BF00EC5395 /* IRFiltersRepository.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IRFiltersRepository.h; sourceTree = "<group>"; };
 		D37E16F31E4879BF00EC5395 /* IRFilterDescription.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IRFilterDescription.m; sourceTree = "<group>"; };
-		D37E16FD1E488D8000EC5395 /* IRFiltersConfiguratorCellData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IRFiltersConfiguratorCellData.h; sourceTree = "<group>"; };
-		D37E16FE1E488D8000EC5395 /* IRFiltersConfiguratorCellData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IRFiltersConfiguratorCellData.m; sourceTree = "<group>"; };
+		D37E16FD1E488D8000EC5395 /* IRFilterConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IRFilterConfiguration.h; sourceTree = "<group>"; };
+		D37E16FE1E488D8000EC5395 /* IRFilterConfiguration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IRFilterConfiguration.m; sourceTree = "<group>"; };
 		D37E17011E488DCA00EC5395 /* IRFiltersConfiguratorViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IRFiltersConfiguratorViewController.m; sourceTree = "<group>"; };
 		D37E17021E488DCA00EC5395 /* IRFiltersConfiguratorTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IRFiltersConfiguratorTableViewCell.m; sourceTree = "<group>"; };
 		D37E17031E488DCA00EC5395 /* IRFiltersConfiguratorTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IRFiltersConfiguratorTableViewCell.h; sourceTree = "<group>"; };
@@ -138,13 +138,23 @@
 			path = "gpuimage-editor";
 			sourceTree = "<group>";
 		};
+		8D45716C1F98690600CD551D /* FilterConfiguration */ = {
+			isa = PBXGroup;
+			children = (
+				D37E16EE1E4879BF00EC5395 /* IRFilterParameterDescription.h */,
+				D37E16EF1E4879BF00EC5395 /* IRFilterParameterDescription.m */,
+				D37E16F01E4879BF00EC5395 /* IRFilterDescription.h */,
+				D37E16F31E4879BF00EC5395 /* IRFilterDescription.m */,
+				D37E16FD1E488D8000EC5395 /* IRFilterConfiguration.h */,
+				D37E16FE1E488D8000EC5395 /* IRFilterConfiguration.m */,
+			);
+			path = FilterConfiguration;
+			sourceTree = "<group>";
+		};
 		D37E16ED1E48797600EC5395 /* Filters */ = {
 			isa = PBXGroup;
 			children = (
-				D37E16F01E4879BF00EC5395 /* IRFilterDescription.h */,
-				D37E16F31E4879BF00EC5395 /* IRFilterDescription.m */,
-				D37E16EE1E4879BF00EC5395 /* IRFilterParameterDescription.h */,
-				D37E16EF1E4879BF00EC5395 /* IRFilterParameterDescription.m */,
+				8D45716C1F98690600CD551D /* FilterConfiguration */,
 				D37E16F21E4879BF00EC5395 /* IRFiltersRepository.h */,
 				D37E16F11E4879BF00EC5395 /* IRFiltersRepository.m */,
 				8D0861951F38271F00DE40A5 /* IRGPUImageBlendFilters.h */,
@@ -166,8 +176,6 @@
 		D37E17001E488DA600EC5395 /* FiltersConfigurator */ = {
 			isa = PBXGroup;
 			children = (
-				D37E16FD1E488D8000EC5395 /* IRFiltersConfiguratorCellData.h */,
-				D37E16FE1E488D8000EC5395 /* IRFiltersConfiguratorCellData.m */,
 				D37E17031E488DCA00EC5395 /* IRFiltersConfiguratorTableViewCell.h */,
 				D37E17021E488DCA00EC5395 /* IRFiltersConfiguratorTableViewCell.m */,
 				D37E17041E488DCA00EC5395 /* IRFiltersConfiguratorViewController.h */,
@@ -328,7 +336,7 @@
 				8D4571671F979F5D00CD551D /* IRGPUImageOverlaysFilterGroup.m in Sources */,
 				D37E16F81E4879BF00EC5395 /* IRFilterDescription.m in Sources */,
 				D37E16F71E4879BF00EC5395 /* IRFiltersRepository.m in Sources */,
-				D37E16FF1E488D8000EC5395 /* IRFiltersConfiguratorCellData.m in Sources */,
+				D37E16FF1E488D8000EC5395 /* IRFilterConfiguration.m in Sources */,
 				D37E17061E488DCA00EC5395 /* IRFiltersConfiguratorTableViewCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
