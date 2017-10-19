@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@class GPUImageFilter;
+@class GPUImageFilter, IRFilterConfiguration;
 
 @interface IRPreviewViewController : UIViewController
 
@@ -16,6 +16,6 @@
 @property(nonatomic, readonly) NSString *filtersCode;
 @property(nonatomic, readonly) NSString *overlayFilterCode;
 
-- (void)setFilters:(NSArray<GPUImageFilter *> *)filters withCode:(NSString*)code;
+- (void)updatePreviewWithFilterConfigurations:(NSArray<IRFilterConfiguration *> *)configurations;
 
 @end

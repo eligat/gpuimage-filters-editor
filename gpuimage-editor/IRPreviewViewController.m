@@ -10,13 +10,17 @@
 #import "IRFiltersConfiguratorViewController.h"
 #import "IRBlendModesViewController.h"
 #import "IRFiltersRepository.h"
-#import "IRFilterDescription.h"
+#import "IRFilterGroupDescription.h"
 #import "IRGPUImageOpacityBlendFilter.h"
+#import "IRGPUImageOverlaysFilterGroup.h"
+#import "IROverlayFilterGroupFactory.h"
 #import <GPUImage/GPUImage.h>
+#import <JSONModel/JSONModel.h>
 
 NSString * const toBlendModesSegueID = @"toBlendModesViewControllerSegueID";
+NSString * const overlayImageName = @"*overlay*";
 
-@interface IRPreviewViewController () <UINavigationControllerDelegate, UIImagePickerControllerDelegate, IRBlendModesViewControllerDelegate>
+@interface IRPreviewViewController () <UINavigationControllerDelegate, UIImagePickerControllerDelegate, IRBlendModesViewControllerDelegate, IRImageDataSource>
 
 @property(nonatomic, weak) IBOutlet UIImageView *sourceImageView;
 @property(nonatomic, weak) IBOutlet UIImageView *resultImageView;
@@ -32,6 +36,10 @@ NSString * const toBlendModesSegueID = @"toBlendModesViewControllerSegueID";
 @property(nonatomic) IRFiltersRepository *filtersRepository;
 @property(nonatomic, nonnull) IRFilterDescription *blendModeFilter;
 
+@property(nonatomic) NSArray<IRFilterConfiguration *> *filterConfigurations;
+@property(nonatomic) IRFilterGroupDescription *filterGroupDescription;
+@property(nonatomic) IRGPUImageOverlaysFilterGroup *filterGroup;
+
 @property(nonatomic) dispatch_queue_t processingQueue;
 @property(nonatomic) CFTimeInterval lastProcessingTime;
 
@@ -46,7 +54,7 @@ NSString * const toBlendModesSegueID = @"toBlendModesViewControllerSegueID";
   self.filtersRepository = [IRFiltersRepository new];
   self.blendModeFilter = self.filtersRepository.blendModeFilters.firstObject;
   
-  [self configureView];
+  [self updatePreview];
   [self updateBlendModeButton];
 }
 
@@ -93,32 +101,18 @@ NSString * const toBlendModesSegueID = @"toBlendModesViewControllerSegueID";
 }
 
 - (IBAction)overlaySliderValueChanged {
-  [self updateFilters];
+  [self updatePreview];
 }
 
 - (IBAction)deleteOverlayButtonPressed:(UIButton *)sender {
   self.overlayImage = nil;
-  [self updateFilters];
+  [self updatePreview];
 }
-
-- (void)updateFilters {
-  // We need to regenerate filters every time we reprocess the output image
-  // because of GPUImage bug with multiple input filters: https://github.com/BradLarson/GPUImage/issues/1522
-  UIViewController *viewController = [(UINavigationController *) [self.splitViewController.viewControllers firstObject] topViewController];
-  if ([viewController isKindOfClass:[IRFiltersConfiguratorViewController class]]) {
-    IRFiltersConfiguratorViewController *configuratorViewController = (IRFiltersConfiguratorViewController *) viewController;
-    [configuratorViewController updateConfiguration];
-  }
-}
-
 
 #pragma mark - Public
-- (void)setFilters:(NSArray<GPUImageFilter *> *)filters withCode:(NSString *)code {
-  _filters = filters;
-  _filtersCode = code;
-
-  [self updateOverlayFilterCode];
-  [self configureView];
+- (void) updatePreviewWithFilterConfigurations:(NSArray<IRFilterConfiguration *> *)configurations {
+  self.filterConfigurations = configurations;
+  [self updatePreview];
 }
 
 #pragma mark - Private
@@ -134,46 +128,43 @@ NSString * const toBlendModesSegueID = @"toBlendModesViewControllerSegueID";
   return controller;
 }
 
-- (void)updateOverlayFilterCode {
-  NSMutableString *code = [NSMutableString new];
-  if (self.filters.count > 0) {
-    unsigned long lastFilterIndex = self.filters.count - 1;
-    NSString *lastFilterName = [NSString stringWithFormat:@"filter%lu",(unsigned long)lastFilterIndex];
-    
-    if (self.overlayImage) {
-      [code appendString:[NSString stringWithFormat:@"IRGPUImageOpacityBlendFilter *blendFilter = [%@ new];\n",
-                          NSClassFromString(self.blendModeFilter.className)]];
-      [code appendString:[NSString stringWithFormat:@"blendFilter.opacity = %f;\n", self.overlayOpacitySlider.value]];
-      [code appendString:@"GPUImagePicture *overlayPicture = [[GPUImagePicture alloc] initWithImage:[UIImage imageNamed:@\"<#(image name)#>\"]];\n"];
-      [code appendString:@"group.overlayPicture = overlayPicture;"];
-      [code appendString:[NSString stringWithFormat:@"[filter%lu addTarget:blendFilter];\n",
-                          (unsigned long)lastFilterIndex]];
-      [code appendString:@"[overlayPicture addTarget:blendFilter];\n"];
-      [code appendString:@"[overlayPicture processImage];\n"];
-      [code appendString:@"[group addFilter:blendFilter];\n"];
-      [code appendString:@"\n"];
-      lastFilterName = @"blendFilter";
-    }
-    
-    [code appendString:@"[group setInitialFilters:@[filter0]];\n"];
-    [code appendString:[NSString stringWithFormat:@"[group setTerminalFilter:%@];\n", lastFilterName]];
-    [code appendString:@"return group;"];
-  }
-  _overlayFilterCode = code;
+- (void) updateFilterGroup {
+  IRFilterOverlayConfiguration *overlayConfig =
+  [[IRFilterOverlayConfiguration alloc] initWithName:self.blendModeFilter.name
+                                           className:self.blendModeFilter.className
+                                           imageName:overlayImageName
+                                             opacity:self.overlayOpacitySlider.value];
+  
+  IRFilterGroupDescription *description =
+  [[IRFilterGroupDescription alloc] initWithFilterConfigurations:self.filterConfigurations
+                                           overlayConfigurations:@[overlayConfig]];
+  
+  self.filterGroupDescription = description;
+  self.filterGroup = [IROverlayFilterGroupFactory overlayFilterGroupWithDescription:description imageDataSource:self];
 }
 
 - (void)updateTextView {
-  self.configurationTextView.text = [NSString stringWithFormat:@"// render time %f\n%@\n%@", self.lastProcessingTime, self.filtersCode, self.overlayFilterCode];
+  NSDictionary *description = self.filterGroupDescription.toDictionary;
+  NSData *jsonData = [NSJSONSerialization dataWithJSONObject:description options:NSJSONWritingPrettyPrinted error:nil];
+  NSString *prettyJsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+  
+  self.configurationTextView.text = prettyJsonString;
 }
 
-- (void)configureView {
+- (void)updatePreview {
+  [self updateFilterGroup];
+  [self updateTextView];
+  
   UIImage *image = self.sourceImageView.image;
   if (image == nil) {
     self.resultImageView.image = nil;
-    self.configurationTextView.text = nil;
     return;
   }
-  UIImage *overlayImage = self.overlayImage;
+  
+  if (self.filterGroup.filterCount == 0) {
+    self.resultImageView.image = image;
+    return;
+  }
   
   if (!self.processingQueue) {
     self.processingQueue = dispatch_queue_create("processingQueue", 0);
@@ -184,41 +175,14 @@ NSString * const toBlendModesSegueID = @"toBlendModesViewControllerSegueID";
     if (!weakself) {
       return;
     }
-    
+
     double t1 = CACurrentMediaTime();
     
-    GPUImagePicture *picture = [[GPUImagePicture alloc] initWithImage:image];
-    GPUImageOutput *output = picture;
-    
-    for (NSUInteger i = 0; i < weakself.filters.count; i++) {
-      GPUImageFilter *filter = weakself.filters[i];
-      [output addTarget:filter];
-      output = filter;
-    }
-    
-    GPUImagePicture *overlayPicture = nil;
-    if (overlayImage) {
-      IRGPUImageOpacityBlendFilter *blendFilter = [NSClassFromString(weakself.blendModeFilter.className) new];
-      blendFilter.opacity = weakself.overlayOpacitySlider.value;
-      
-      overlayPicture = [[GPUImagePicture alloc] initWithImage:overlayImage];
-      
-      [output addTarget:blendFilter];
-      [overlayPicture addTarget:blendFilter];
-      
-      output = blendFilter;
-      
-      [overlayPicture processImage];
-    }
-    
-    [output useNextFrameForImageCapture];
-    [picture processImage];
-    
-    UIImage *currentFilteredFrame = [output imageFromCurrentFramebufferWithOrientation:image.imageOrientation];
+    UIImage *currentFilteredFrame = [weakself.filterGroup imageByFilteringImage:image];
     
     double t2 = CACurrentMediaTime();
     weakself.lastProcessingTime = t2 - t1;
-    
+
     dispatch_async(dispatch_get_main_queue(), ^{
       weakself.resultImageView.image = currentFilteredFrame;
       [weakself updateTextView];
@@ -253,7 +217,7 @@ NSString * const toBlendModesSegueID = @"toBlendModesViewControllerSegueID";
   
   [self dismissViewControllerAnimated:true
                            completion:^{
-                             [self updateFilters];
+                             [self updatePreview];
                            }];
 }
 
@@ -263,8 +227,12 @@ NSString * const toBlendModesSegueID = @"toBlendModesViewControllerSegueID";
   self.blendModeFilter = filter;
   [controller dismissViewControllerAnimated:true completion:nil];
   [self updateBlendModeButton];
-  [self updateFilters];
+  [self updatePreview];
 }
 
+#pragma mark - IRImageDataSource
+- (UIImage *)imageForName:(NSString *)name {
+  return self.overlayImage;
+}
 
 @end

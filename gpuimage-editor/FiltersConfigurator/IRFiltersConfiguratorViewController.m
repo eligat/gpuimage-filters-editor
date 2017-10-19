@@ -106,54 +106,17 @@
 #pragma mark - Public
 
 - (void)updateConfiguration {
-  NSMutableArray<GPUImageFilter *> *filters = [NSMutableArray new];
-  NSMutableString* filtersCode = [NSMutableString stringWithString:@"IRGPUImageOverlayFilterGroup *group = [IRGPUImageOverlayFilterGroup new];\n"];
-  NSUInteger enabledFilterIdx = 0;
-
-  for (NSUInteger i = 0; i < self.tableData.count; i++) {
-    IRFilterConfiguration *configuration = self.tableData[i];
-    if (!configuration.enabled) {
-      continue;
+  NSMutableArray<IRFilterConfiguration *> *enabledFilters = [NSMutableArray new];
+  for (IRFilterConfiguration *configuration in self.tableData) {
+    if (configuration.enabled) {
+      [enabledFilters addObject:configuration];
     }
-    
-    // Filter creation string
-    NSString* className = configuration.filterDescription.className;
-    id filter = [NSClassFromString(className) new];
-    [filtersCode appendString:[NSString stringWithFormat:@"%@ *filter%lu = [%@ new];\n", className, (unsigned long)enabledFilterIdx, className]];
-    
-    // Parameter composition string
-    for (NSUInteger j = 0; j < configuration.filterDescription.parametersDescription.count; j++) {
-      IRFilterParameterDescription *parameterDescription = configuration.filterDescription.parametersDescription[j];
-
-      NSString* setterName = parameterDescription.setterName;
-      CGFloat value = configuration.values[j].floatValue;
-
-      SEL setterSelector = NSSelectorFromString(setterName);
-      NSMethodSignature *setterSignature = [[filter class] instanceMethodSignatureForSelector:setterSelector];
-      NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:setterSignature];
-      [invocation setTarget:filter];
-      [invocation setSelector:setterSelector];
-      [invocation setArgument:&value atIndex:2];
-      [invocation invoke];
-     
-      [filtersCode appendString:[NSString stringWithFormat:@"[filter%lu %@%f];\n", (unsigned long)enabledFilterIdx, setterName, value]];
-    }
-    
-    [filtersCode appendString:[NSString stringWithFormat:@"[group addFilter:filter%lu];\n", (unsigned long)enabledFilterIdx]];
-    if (enabledFilterIdx > 0) {
-      [filtersCode appendString:[NSString stringWithFormat:@"[filter%lu addTarget:filter%lu];\n",
-                                 (unsigned long)(enabledFilterIdx-1), (unsigned long)enabledFilterIdx]];
-    }
-    [filtersCode appendString:@"\n"];
-    
-    [filters addObject:filter];
-    enabledFilterIdx++;
   }
   
   UIViewController *viewController = [(UINavigationController *) [self.splitViewController.viewControllers lastObject] topViewController];
   if ([viewController isKindOfClass:[IRPreviewViewController class]]) {
     IRPreviewViewController *previewViewController = (IRPreviewViewController *) viewController;
-    [previewViewController setFilters:filters withCode:filtersCode];
+    [previewViewController updatePreviewWithFilterConfigurations:enabledFilters];
   }
 }
 
