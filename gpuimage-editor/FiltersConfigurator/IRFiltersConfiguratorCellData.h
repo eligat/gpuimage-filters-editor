@@ -8,8 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "JSONModel.h"
-
-@class IRFilterDescription;
+#import "IRFilterDescription.h"
 
 @interface IRFiltersConfiguratorCellData: JSONModel
 

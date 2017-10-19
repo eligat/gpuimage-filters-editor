@@ -8,8 +8,8 @@
 
 #import <Foundation/Foundation.h>
 #import "JSONModel.h"
+#import "IRFilterParameterDescription.h"
 
-@class IRFilterParameterDescription;
 @protocol IRFilterParameterDescription;
 
 @interface IRFilterDescription : JSONModel
