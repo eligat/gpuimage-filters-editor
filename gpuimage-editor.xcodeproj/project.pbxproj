@@ -15,6 +15,8 @@
 		67922DBCC429A7F0D1BE63F1 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 679223918E35FFD3A6A2FAB5 /* LaunchScreen.storyboard */; };
 		8D0861991F38271F00DE40A5 /* IRGPUImageBlendFilters.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D0861961F38271F00DE40A5 /* IRGPUImageBlendFilters.m */; };
 		8D08619A1F38271F00DE40A5 /* IRGPUImageOpacityBlendFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D0861981F38271F00DE40A5 /* IRGPUImageOpacityBlendFilter.m */; };
+		8D4571611F97905D00CD551D /* IRFilterGroupDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D4571601F97905D00CD551D /* IRFilterGroupDescription.m */; };
+		8D4571641F9791E100CD551D /* IRFilterOverlayConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D4571631F9791E100CD551D /* IRFilterOverlayConfiguration.m */; };
 		8DF43B4F1F33233800E08CE3 /* IRBlendModesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8DF43B4E1F33233800E08CE3 /* IRBlendModesViewController.m */; };
 		D37E16DD1E48747200EC5395 /* IRPreviewViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D37E16DC1E48747200EC5395 /* IRPreviewViewController.m */; };
 		D37E16F61E4879BF00EC5395 /* IRFilterParameterDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = D37E16EF1E4879BF00EC5395 /* IRFilterParameterDescription.m */; };
@@ -39,6 +41,10 @@
 		8D0861961F38271F00DE40A5 /* IRGPUImageBlendFilters.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IRGPUImageBlendFilters.m; sourceTree = "<group>"; };
 		8D0861971F38271F00DE40A5 /* IRGPUImageOpacityBlendFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IRGPUImageOpacityBlendFilter.h; sourceTree = "<group>"; };
 		8D0861981F38271F00DE40A5 /* IRGPUImageOpacityBlendFilter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IRGPUImageOpacityBlendFilter.m; sourceTree = "<group>"; };
+		8D45715F1F97905D00CD551D /* IRFilterGroupDescription.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IRFilterGroupDescription.h; sourceTree = "<group>"; };
+		8D4571601F97905D00CD551D /* IRFilterGroupDescription.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = IRFilterGroupDescription.m; sourceTree = "<group>"; };
+		8D4571621F9791E100CD551D /* IRFilterOverlayConfiguration.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IRFilterOverlayConfiguration.h; sourceTree = "<group>"; };
+		8D4571631F9791E100CD551D /* IRFilterOverlayConfiguration.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = IRFilterOverlayConfiguration.m; sourceTree = "<group>"; };
 		8DF43B4D1F33233800E08CE3 /* IRBlendModesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IRBlendModesViewController.h; sourceTree = "<group>"; };
 		8DF43B4E1F33233800E08CE3 /* IRBlendModesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IRBlendModesViewController.m; sourceTree = "<group>"; };
 		A4564D16D533F48C17F10840 /* Pods-gpuimage-editor.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-gpuimage-editor.release.xcconfig"; path = "Pods/Target Support Files/Pods-gpuimage-editor/Pods-gpuimage-editor.release.xcconfig"; sourceTree = "<group>"; };
@@ -139,6 +145,10 @@
 				8D0861961F38271F00DE40A5 /* IRGPUImageBlendFilters.m */,
 				8D0861971F38271F00DE40A5 /* IRGPUImageOpacityBlendFilter.h */,
 				8D0861981F38271F00DE40A5 /* IRGPUImageOpacityBlendFilter.m */,
+				8D4571621F9791E100CD551D /* IRFilterOverlayConfiguration.h */,
+				8D4571631F9791E100CD551D /* IRFilterOverlayConfiguration.m */,
+				8D45715F1F97905D00CD551D /* IRFilterGroupDescription.h */,
+				8D4571601F97905D00CD551D /* IRFilterGroupDescription.m */,
 			);
 			path = Filters;
 			sourceTree = "<group>";
@@ -294,9 +304,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8D4571611F97905D00CD551D /* IRFilterGroupDescription.m in Sources */,
 				679229DC6818E35735001F75 /* main.m in Sources */,
 				D37E17051E488DCA00EC5395 /* IRFiltersConfiguratorViewController.m in Sources */,
 				8DF43B4F1F33233800E08CE3 /* IRBlendModesViewController.m in Sources */,
+				8D4571641F9791E100CD551D /* IRFilterOverlayConfiguration.m in Sources */,
 				D37E16F61E4879BF00EC5395 /* IRFilterParameterDescription.m in Sources */,
 				D37E16DD1E48747200EC5395 /* IRPreviewViewController.m in Sources */,
 				8D0861991F38271F00DE40A5 /* IRGPUImageBlendFilters.m in Sources */,
