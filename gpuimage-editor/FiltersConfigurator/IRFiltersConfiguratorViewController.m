@@ -65,7 +65,7 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
   self.tableData[indexPath.row].enabled = true;
-
+  
   [self updateConfiguration];
 }
 
@@ -104,6 +104,40 @@
 }
 
 #pragma mark - Public
+- (void)setFiltersConfiguration:(NSArray<IRFilterConfiguration *> *)configurations {
+  
+  NSMutableArray<NSIndexPath *> *indexPathsToSelect = [NSMutableArray new];
+  
+  [self.tableData enumerateObjectsUsingBlock:^(IRFilterConfiguration * _Nonnull filter, NSUInteger idx, BOOL * _Nonnull stop) {
+    filter.enabled = NO;
+    
+    NSUInteger index = [configurations indexOfObjectPassingTest:^BOOL(IRFilterConfiguration * _Nonnull obj,
+                                                                      NSUInteger idx,
+                                                                      BOOL * _Nonnull stop) {
+      if ([obj.filterDescription.className isEqualToString:filter.filterDescription.className]) {
+        *stop = YES;
+        return YES;
+      }
+      
+      return NO;
+    }];
+    
+    if (index != NSNotFound) {
+      IRFilterConfiguration *config = configurations[index];
+      filter.values = config.values;
+      filter.enabled = YES;
+      [indexPathsToSelect addObject:[NSIndexPath indexPathForRow:idx inSection:0]];
+    }
+  }];
+  
+  [self.tableView reloadData];
+  
+  for (NSIndexPath *indexPath in indexPathsToSelect) {
+    [self.tableView selectRowAtIndexPath:indexPath animated:NO scrollPosition:UITableViewScrollPositionNone];
+  }
+}
+
+#pragma mark - Private
 
 - (void)updateConfiguration {
   NSMutableArray<IRFilterConfiguration *> *enabledFilters = [NSMutableArray new];

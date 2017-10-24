@@ -59,6 +59,54 @@ NSString * const overlayImageName = @"*overlay*";
 }
 
 #pragma mark - Actions
+- (IBAction)pressedImportButton:(UIBarButtonItem *)sender {
+  // The \n is required so that the alertcontroller keeps space for the message. Add as many \n as you like your textview height to be
+  UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Import filter configuration here"
+                                                             message:@"\n\n\n\n\n\n\n\n\n\n\n\n"
+                                                      preferredStyle:UIAlertControllerStyleAlert];
+  
+  alertController.view.autoresizesSubviews = YES;
+  UITextView *textView = [[UITextView alloc] initWithFrame:CGRectZero];
+  textView.translatesAutoresizingMaskIntoConstraints = NO;
+  textView.editable = YES;
+  textView.dataDetectorTypes = UIDataDetectorTypeAll;
+  textView.text = @"";
+  textView.userInteractionEnabled = YES;
+  textView.backgroundColor = [UIColor whiteColor];
+  // This will make the scroll view scrollable if the text is too long
+  textView.scrollEnabled = YES;
+  [alertController.view addSubview:textView];
+  
+  NSLayoutConstraint *leadConstraint = [NSLayoutConstraint constraintWithItem:alertController.view attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationEqual toItem:textView attribute:NSLayoutAttributeLeading multiplier:1.0 constant:-8.0];
+  NSLayoutConstraint *trailConstraint = [NSLayoutConstraint constraintWithItem:alertController.view attribute:NSLayoutAttributeTrailing relatedBy:NSLayoutRelationEqual toItem:textView attribute:NSLayoutAttributeTrailing multiplier:1.0 constant:8.0];
+  NSLayoutConstraint *topConstraint = [NSLayoutConstraint constraintWithItem:alertController.view attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:textView attribute:NSLayoutAttributeTop multiplier:1.0 constant:-80.0];
+  NSLayoutConstraint *bottomConstraint = [NSLayoutConstraint constraintWithItem:alertController.view attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:textView attribute:NSLayoutAttributeBottom multiplier:1.0 constant:64.0];
+  [NSLayoutConstraint activateConstraints:@[leadConstraint, trailConstraint, topConstraint, bottomConstraint]];
+  
+  [alertController addAction: [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil]];
+  [alertController addAction: [UIAlertAction actionWithTitle:@"Import" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+    [alertController dismissViewControllerAnimated:YES completion:nil];
+    
+    NSError *error = nil;
+    IRFilterGroupDescription *filter = [[IRFilterGroupDescription alloc] initWithString:textView.text error:&error];
+    
+    if (error) {
+      UIAlertController *alertController =
+      [UIAlertController alertControllerWithTitle:@"Error occured at import"
+                                          message:error.localizedDescription
+                                   preferredStyle:UIAlertControllerStyleAlert];
+      [alertController addAction: [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleCancel handler:nil]];
+      [self presentViewController:alertController animated:YES completion:nil];
+      return;
+    }
+    
+    [self updateWithFilterGroup:filter];
+    
+  }]];
+  
+  [self presentViewController:alertController animated:true completion:nil];
+}
+
 - (IBAction)pressedShareButton:(UIBarButtonItem *)sender {
   UIActivityViewController *activityViewController =
       [[UIActivityViewController alloc] initWithActivityItems:@[self.configurationTextView.text]
@@ -126,6 +174,44 @@ NSString * const overlayImageName = @"*overlay*";
   controller.popoverPresentationController.barButtonItem = button;
   
   return controller;
+}
+
+- (void) updateWithFilterGroup:(IRFilterGroupDescription *)group {
+  
+  // Import overlay
+  IRFilterOverlayConfiguration *overlayConfig = group.overlayConfigurations.firstObject;
+  
+  if (overlayConfig) {
+    NSUInteger index = [self.filtersRepository.blendModeFilters indexOfObjectPassingTest:^BOOL(IRFilterDescription * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+      if ([obj.className isEqualToString:overlayConfig.className]) {
+        *stop = YES;
+        return YES;
+      }
+      
+      return NO;
+    }];
+    if (index != NSNotFound) {
+      IRFilterDescription *blendFilterDescription = self.filtersRepository.blendModeFilters[index];
+      self.blendModeFilter = blendFilterDescription;
+      self.overlayOpacitySlider.value = overlayConfig.opacity;
+      self.overlayOpacitySliderValueLabel.text = [NSString stringWithFormat:@"%.2f", overlayConfig.opacity];
+      [self updateBlendModeButton];
+    }
+  } else {
+    self.blendModeFilter = self.filtersRepository.blendModeFilters.firstObject;
+    self.overlayImage = nil;
+  }
+  
+  //Import filter config
+  self.filterGroupDescription = group;
+  self.filterConfigurations = group.filterConfigurations;
+  UIViewController *viewController = [(UINavigationController *) [self.splitViewController.viewControllers firstObject] topViewController];
+  if ([viewController isKindOfClass:[IRFiltersConfiguratorViewController class]]) {
+    IRFiltersConfiguratorViewController *configuratorViewController = (IRFiltersConfiguratorViewController *) viewController;
+    [configuratorViewController setFiltersConfiguration:group.filterConfigurations];
+  }
+  
+  [self updatePreview];
 }
 
 - (void) updateFilterGroup {

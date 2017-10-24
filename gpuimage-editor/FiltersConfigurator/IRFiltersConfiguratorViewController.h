@@ -8,12 +8,12 @@
 
 #import <UIKit/UIKit.h>
 
-@class IRPreviewViewController;
+@class IRPreviewViewController, IRFilterConfiguration;
 
 @interface IRFiltersConfiguratorViewController : UITableViewController
 
 @property(strong, nonatomic) IRPreviewViewController *previewViewController;
 
-- (void)updateConfiguration;
+- (void)setFiltersConfiguration:(NSArray<IRFilterConfiguration *> *)configuration;
 
 @end
