@@ -30,8 +30,8 @@
                            parametersDescription:@[
                                [IRFilterParameterDescription descriptionWithName:@"exposure"
                                                                       setterName:@"setExposure:"
-                                                                        minValue:@(-10.0)
-                                                                        maxValue:@(10.0)]
+                                                                        minValue:@(-5.0)
+                                                                        maxValue:@(5.0)]
                            ]
         ],
         [IRFilterDescription descriptionWithName:@"Contrast"
