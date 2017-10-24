@@ -15,7 +15,6 @@
 
 @property (nonatomic, weak) IBOutlet UILabel* nameLabel;
 @property (nonatomic, weak) IBOutlet UIStackView* parametersStackView;
-@property (nonatomic, weak) UISlider* slider;
 
 @property (nonatomic) NSTimer* timer;
 
@@ -57,7 +56,6 @@
                action:@selector(sliderShouldChange:)
      forControlEvents:UIControlEventValueChanged];
     [self.parametersStackView addArrangedSubview:slider];
-    self.slider = slider;
   }
 
   self.selected = cellData.enabled;
