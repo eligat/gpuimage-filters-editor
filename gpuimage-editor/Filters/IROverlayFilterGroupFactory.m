@@ -64,6 +64,7 @@
     
     // Add overlay
     if (description.overlayConfigurations.count == 0) {
+        [group setTerminalFilter:lastFilter];
         return group;
     }
     
